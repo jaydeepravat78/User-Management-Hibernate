@@ -17,8 +17,9 @@ jQuery.validator.addMethod("phone_regex", function(value, element) {
 jQuery.validator.addMethod("password_regex", function(value, element) {
 	return this.optional(element) || /^[a-z0-9!@#$%^&*()_\.\-_]{8,30}$/i.test(value);
 }, "Password of atleast 8 characters."); // password check
-
-
+jQuery.validator.addMethod("address", function(value,element) {
+	
+});
 
 $("#reg_form").validate({
 	rules: {

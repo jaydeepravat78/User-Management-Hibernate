@@ -13,7 +13,6 @@ form {
 }
 .error {
 	display: block;
-	margin-bottom: 5px;
 	color: red;
 	font-size: 14px;
 }
@@ -22,4 +21,7 @@ form {
 }
 h1 {
 	text-transform: uppercase;
+}
+.btn-reset {
+	margin-left: 20px;
 }

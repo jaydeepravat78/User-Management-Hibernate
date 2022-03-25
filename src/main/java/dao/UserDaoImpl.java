@@ -29,7 +29,7 @@ public class UserDaoImpl implements UserDao {
 			stmt.setString(2, password);
 			ResultSet rs = stmt.executeQuery();
 			u = new User();
-			if(rs.next());
+			if(rs.next()) 
 				u.setUser_id(rs.getInt(1));
 		} catch (SQLException e) {
 			log.error(e);

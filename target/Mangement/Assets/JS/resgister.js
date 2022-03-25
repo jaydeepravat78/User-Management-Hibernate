@@ -19,6 +19,7 @@ jQuery.validator.addMethod("password_regex", function(value, element) {
 }, "Password of atleast 8 characters."); // password check
 
 
+
 $("#reg_form").validate({
 	rules: {
 		'user_name': {
@@ -51,7 +52,13 @@ $("#reg_form").validate({
 		'games': {
 			required: true,
 		},
-		'user_street[][street]' : {
+		'user_street' : {
+			required: true,
+		},
+		'user_city' : {
+			required: true,
+		},
+		'user_state' : {
 			required: true,
 		},
 		'user_photo': {
@@ -85,8 +92,14 @@ $("#reg_form").validate({
 		'games': {
 			required: "*Please select a game",
 		},
-		'user_street[][street]' : {
+		'user_street' : {
 			required: "*Please enter your street",
+		},
+		'user_city' : {
+			required: "*Please enter your city",
+		},
+		'user_state' : {
+			required: "*Please enter your city",
 		},
 		'user_photo': {
 			required: "*Please enter a photo",
@@ -101,49 +114,7 @@ $("#reg_form").validate({
 		}
 	},
 	submitHandler: function(form) {
-		var user_name = $(form).find('input[name="user_name"]').val();
-		var user_email = $(form).find('input[name="user_email"]').val();
-		var user_password = $(form).find('input[name="user_password"]').val();
-		var user_phone = $(form).find('input[name="user_phone"]').val();
-		var user_gender = $(form).find('input[name="gender"]').val();
-		var languages = new Array();
-		$(form).find("input[type=checkbox]:checked").each(function() {
-			languages.push(this.value);
-		});
-		var game = $(form).find("#inputGame").val();
-		var street = new Array();
-		var city = new Array();
-		var state = new Array();
-		for (var i = 0; i < $('.container-item').length; i++) {
-			street.push($(form).find('input[name="user_street[' + i + '][street]"').val());
-			city.push($(form).find('input[name="user_city[' + i + '][city]"').val());
-			state.push($(form).find('input[name="user_state[' + i + '][state]"').val());
-		}
-		var profile = $(form).find('input[name="user_photo"').val();
-		$.ajax({
-			type: "post",
-			url: "Register",
-			data: {
-				"user_name": user_name,
-				"user_email": user_email,
-				"user_password": user_password,
-				"user_phone": user_phone,
-				"user_gender": user_gender,
-				"user_lang": languages,
-				"user_street": street,
-				"user_city": city,
-				"user_state": state,
-				"user_game": game,
-				"user_pic": profile,
-			},
-			success: function(response) {
-				console.log("Success " + response);
-				window.location.href = "index.jsp";
-			},
-			error: function(xhr, ajaxOptions, thrownError) {
-				console.log(xhr.status + " " + thrownError);
-			}
-		});
+		form.submit();
 	}
 });
 

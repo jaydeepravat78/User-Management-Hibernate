@@ -15,7 +15,7 @@
 <body>
 	<div class="container">
 		<h1 class="text-center">Register</h1>
-		<form class="form-horizontal" id="reg_form" method="post" action="Register">
+		<form class="form-horizontal" id="reg_form" method="post" action="Register" enctype="multipart/form-data">
 			<div class="form-group">
 				<label for="inputName" class="col-sm-2 control-label">Name</label>
 				<div class="col-sm-10">
@@ -96,15 +96,15 @@
 						<div class="col-sm-10">
 							<div class="col-sm-4">
 								<input type="text" name="user_street" class="form-control"
-									placeholder="Street">
+									placeholder="Street" required>
 							</div>
 							<div class="col-sm-3">
 								<input type="text" name="user_city" class="form-control"
-									placeholder="City">
+									placeholder="City" required>
 							</div>
 							<div class="col-sm-3">
 								<input type="text" name="user_state" class="form-control"
-									placeholder="State">
+									placeholder="State" required>
 							</div>
 							<div class="col-sm-2">
 								<a href="javascript:void(0)"
@@ -131,6 +131,7 @@
 			<div class="form-group">
 				<div class="col-sm-offset-2 col-sm-10">
 					<button type="submit" class="btn btn-lg btn-success">Register</button>
+					<button type="reset" class="btn btn-lg btn-danger btn-reset">Reset</button>
 				</div>
 			</div>
 		</form>

@@ -33,7 +33,7 @@
 			</div>
 			<div class="form-group">
 				<div class="col-sm-offset-2 col-sm-10">
-					<a href="">Forgot Password?</a>
+					<a href="forgot.jsp">Forgot Password?</a>
 				</div>
 			</div>
 			<div class="form-group">

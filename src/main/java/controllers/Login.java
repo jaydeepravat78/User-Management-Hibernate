@@ -47,7 +47,7 @@ public class Login extends HttpServlet {
 		UserDao dao = new UserDaoImpl();
 		User u = dao.login(email, password);
 		if(u == null || u.getUser_id() == 0) {
-			log.error("fail to login");
+			log.warn("fail to login");
 		}
 		else {
 			log.info(u.getUser_id() + "login successful");
