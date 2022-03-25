@@ -47,22 +47,17 @@ public class Register extends HttpServlet {
 		String email = request.getParameter("user_email");
 		String phone = request.getParameter("user_phone");
 		String password = request.getParameter("user_password");
-		String gender = request.getParameter("user_gender");
-		String[] lang = request.getParameterValues("user_lang[]");
-		String[] street = request.getParameterValues("user_street[]");
-		String[] city = request.getParameterValues("user_city[]");
-		String[] state = request.getParameterValues("user_state[]");
-		String game = request.getParameter("user_game");
-		String profile = request.getParameter("user_pic");
+		String gender = request.getParameter("gender");
+		String[] lang = request.getParameterValues("lang");
+		String[] street = request.getParameterValues("user_city");
+		String game = request.getParameter("games");
+		String profile = request.getParameter("user_photo");
 		System.out.println(name + " " + email + " " + phone + " " + password + " " + gender + " " + game + " " + profile);
 		for(String l: lang)
 			System.out.println("Language " + l);
 		for(String s: street)
-			System.out.println("Street " +s);
-		for(String c: city)
-			System.out.println("City "+c);
-		for(String s: state)
-			System.out.println("State " + s);
+			System.out.println("Street " + s);
+		log.info("In registration");
 		response.sendRedirect("index.jsp");
 	}
 
