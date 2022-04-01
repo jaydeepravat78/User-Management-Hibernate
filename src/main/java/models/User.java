@@ -1,77 +1,125 @@
 package models;
 
+import java.io.InputStream;
+import java.util.List;
+
 public class User {
-	private int user_id;
-	private String user_name;
-	private String user_email;
-	private String user_password;
-	private String user_phone;
-	private String user_gender;
-	private String user_game;
-	private String user_lang;
+	private int id;
+	public String name;
+	private String email;
+	private String password;
+	private String phone;
+	private String gender;
+	private String game;
+	private String[] lang;
+	private String secQues;
+	private InputStream photo;
+	private String base64Photo;
+	private List<Address> addresses;
+	private boolean isAdmin;
 
-	public int getUser_id() {
-		return user_id;
+	public String getBase64Photo() {
+		return base64Photo;
 	}
 
-	public void setUser_id(int user_id) {
-		this.user_id = user_id;
+	public void setBase64Photo(String base64Photo) {
+		this.base64Photo = base64Photo;
 	}
 
-	public String getUser_name() {
-		return user_name;
+	public boolean isAdmin() {
+		return isAdmin;
 	}
 
-	public void setUser_name(String user_name) {
-		this.user_name = user_name;
+	public void setAdmin(boolean isAdmin) {
+		this.isAdmin = isAdmin;
 	}
 
-	public String getUser_email() {
-		return user_email;
+	public String getSecQues() {
+		return secQues;
 	}
 
-	public void setUser_email(String user_email) {
-		this.user_email = user_email;
+	public InputStream getPhoto() {
+		return photo;
 	}
 
-	public String getUser_password() {
-		return user_password;
+	public void setPhoto(InputStream photo) {
+		this.photo = photo;
 	}
 
-	public void setUser_password(String user_password) {
-		this.user_password = user_password;
+	public void setSecQues(String secQues) {
+		this.secQues = secQues;
 	}
 
-	public String getUser_phone() {
-		return user_phone;
+	public List<Address> getAddresses() {
+		return addresses;
 	}
 
-	public void setUser_phone(String user_phone) {
-		this.user_phone = user_phone;
+	public void setAddresses(List<Address> addresses) {
+		this.addresses = addresses;
 	}
 
-	public String getUser_gender() {
-		return user_gender;
+	public int getId() {
+		return id;
 	}
 
-	public void setUser_gender(String user_gender) {
-		this.user_gender = user_gender;
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public String getUser_game() {
-		return user_game;
+	public String getName() {
+		return name;
 	}
 
-	public void setUser_game(String user_game) {
-		this.user_game = user_game;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public String getUser_lang() {
-		return user_lang;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setUser_lang(String user_lang) {
-		this.user_lang = user_lang;
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public String getGame() {
+		return game;
+	}
+
+	public void setGame(String game) {
+		this.game = game;
+	}
+
+	public String[] getLang() {
+		return lang;
+	}
+
+	public void setLang(String[] lang) {
+		this.lang = lang;
 	}
 
 }

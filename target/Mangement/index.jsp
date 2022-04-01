@@ -16,19 +16,20 @@
 <body>
 	<div class="container">
 		<h1 class="text-center">Login</h1>
-		<form class="form-horizontal uform" action="Login" method="Post">
+		<form class="form-horizontal uform" action="LoginController"
+			method="Post">
 			<div class="form-group">
 				<label for="inputEmail" class="col-sm-2 control-label">Email</label>
 				<div class="col-sm-10">
-					<input type="email" name="user_email" class="form-control" id="inputEmail"
-						placeholder="Email">
+					<input type="email" name="user_email" class="form-control"
+						id="inputEmail" placeholder="Email">
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="inputPassword" class="col-sm-2 control-label">Password</label>
 				<div class="col-sm-10">
-					<input type="password" name="user_password" class="form-control" id="inputPassword"
-						placeholder="Password">
+					<input type="password" name="user_password" class="form-control"
+						id="inputPassword" placeholder="Password">
 				</div>
 			</div>
 			<div class="form-group">
@@ -43,7 +44,8 @@
 			</div>
 			<div class="form-group">
 				<div class="col-sm-offset-2 col-sm-10">
-					<button type="submit" class="btn btn-lg btn-success">Sign in</button>
+					<button type="submit" class="btn btn-lg btn-success">Sign
+						in</button>
 				</div>
 			</div>
 		</form>

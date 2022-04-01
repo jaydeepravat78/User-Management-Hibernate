@@ -7,7 +7,7 @@
 <title>Registration</title>
 <link href="Assets/Libraries/bootstrap/css/bootstrap.min.css"
 	rel="stylesheet">
-    
+
 <link rel="stylesheet" href="Assets/Fonts/font.css"></link>
 <!-- bootstrap -->
 <link rel="stylesheet" href="Assets/CSS/register.css"></link>
@@ -15,7 +15,8 @@
 <body>
 	<div class="container">
 		<h1 class="text-center">Register</h1>
-		<form class="form-horizontal" id="reg_form" method="post" action="Register" enctype="multipart/form-data">
+		<form class="form-horizontal" id="reg_form" method="post"
+			action="RegisterController" enctype="multipart/form-data">
 			<div class="form-group">
 				<label for="inputName" class="col-sm-2 control-label">Name</label>
 				<div class="col-sm-10">
@@ -26,7 +27,7 @@
 			<div class="form-group">
 				<label for="inputEmail" class="col-sm-2 control-label">Email</label>
 				<div class="col-sm-10">
-					<input type="email" name="user_email" class="form-control"
+					<input type="text" name="user_email" class="form-control"
 						id="inputEmail" placeholder="raj@gmail.com">
 				</div>
 			</div>
@@ -89,6 +90,14 @@
 					</select>
 				</div>
 			</div>
+			<div class="form-group">
+				<label for="secQues" class="col-sm-2 control-label">Security
+					Question</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" name="secQues" id="secQues"
+						placeholder="What is the name of your first school?">
+				</div>
+			</div>
 			<div id="main-container">
 				<div class="container-item">
 					<div class="form-group">
@@ -96,15 +105,15 @@
 						<div class="col-sm-10">
 							<div class="col-sm-4">
 								<input type="text" name="user_street" class="form-control"
-									placeholder="Street">
+									placeholder="Street" required>
 							</div>
 							<div class="col-sm-3">
 								<input type="text" name="user_city" class="form-control"
-									placeholder="City">
+									placeholder="City" required>
 							</div>
 							<div class="col-sm-3">
 								<input type="text" name="user_state" class="form-control"
-									placeholder="State">
+									placeholder="State" required>
 							</div>
 							<div class="col-sm-2">
 								<a href="javascript:void(0)"
@@ -115,11 +124,12 @@
 				</div>
 			</div>
 			<div class="col-sm-offset-2 col-sm-10">
-				<a id="add-more" href="javascript:;" class="btn btn-sm btn-warning addbtn">Add</a>
+				<a id="add-more" href="javascript:;"
+					class="btn btn-sm btn-warning addbtn">Add</a>
 			</div>
 			<div class="form-group">
 				<label for="inputPhoto" class="col-sm-2 control-label">Photo</label>
-				<div class="col-sm-10">	
+				<div class="col-sm-10">
 					<input type="file" name="user_photo" class="btn btn-default">
 				</div>
 			</div>
@@ -137,15 +147,13 @@
 		</form>
 	</div>
 
-	<script
-		src="Assets/JS/jquery-3.6.0.min.js"></script>
+	<script src="Assets/JS/jquery-3.6.0.min.js"></script>
 	<!-- jquery -->
 	<script src="Assets/Libraries/clonedata/cloneData.js"></script>
 	<!-- clone data -->
 	<script src="Assets/Libraries/bootstrap/js/bootstrap.min.js"></script>
 	<!-- bootstrap jquery -->
-	<script
-		src="Assets/Libraries/validate/jquery.validate.min.js"></script>
+	<script src="Assets/Libraries/validate/jquery.validate.min.js"></script>
 	<!-- validate js -->
 	<script src="Assets/JS/resgister.js"></script>
 	<!--  js script -->

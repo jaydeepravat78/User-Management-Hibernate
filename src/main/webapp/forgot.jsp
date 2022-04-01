@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
+	pageEncoding="ISO-8859-1" isELIgnored="false" session="true"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,31 +12,19 @@
 <!-- bootstrap -->
 
 <link rel="stylesheet" href="Assets/Fonts/font.css"></link>
-<style>
-html, body {
-	margin: 0;
-	padding: 0;
-	font-family: 'Poppins', sans-serif;
-}
-
-form {
-	width: 70%;
-	display: block;
-	margin: 20px auto;
-	background-color: aliceblue;
-	padding: 20px;
-	border-radius: 20px;
-}
-
-h1 {
-	text-transform: uppercase;
-}
-</style>
+<link rel="stylesheet" href="Assets/CSS/forgot.css"></link>
 </head>
 <body>
+	<jsp:include page="header.html"></jsp:include>
 	<div class="container">
-		<h1 class="text-center">Forgot Password</h1>
-		<form class="form-horizontal" action="#">
+		<form class="form-horizontal" action="ForgotController" method="post"
+			id="forgot-form">
+			<div class="error text-center">
+				<c:if test="${not empty errorMessage}">
+					<c:out value="${errorMessage}" />
+				</c:if>
+			</div>
+			<h2 class="text-center">Forgot Password</h2>
 			<div class="form-group">
 				<label for="inputEmail" class="col-sm-2 control-label">Email</label>
 				<div class="col-sm-10">
@@ -43,17 +33,11 @@ h1 {
 				</div>
 			</div>
 			<div class="form-group">
-				<label for="inputLang" class="col-sm-2 control-label">Language</label>
-				<div class="col-sm-6">
-					<label class="checkbox-inline"> <input type="checkbox"
-						id="inputLang1" name="lang" value="Java"> Java
-					</label> <label class="checkbox-inline"> <input type="checkbox"
-						id="inputLang2" name="lang" value="C++"> C++
-					</label> <label class="checkbox-inline"> <input type="checkbox"
-						id="inputLang3" name="lang" value="Python"> Python
-					</label> <label class="checkbox-inline"> <input type="checkbox"
-						id="inputLang4" name="lang" value="Kotlin"> Kotlin
-					</label>
+				<label for="secQues" class="col-sm-2 control-label">Security
+					Question</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" name="secQues" id="secQues"
+						placeholder="What is the name of your first school?">
 				</div>
 			</div>
 			<div class="form-group">
@@ -69,7 +53,8 @@ h1 {
 				</div>
 			</div>
 			<div class="form-group">
-				<label for="inputPassword" class="col-sm-2 control-label">New Password</label>
+				<label for="inputPassword" class="col-sm-2 control-label">New
+					Password</label>
 				<div class="col-sm-10">
 					<input type="password" class="form-control" name="user_password"
 						id="inputPassword" placeholder="********">
@@ -90,14 +75,20 @@ h1 {
 			</div>
 			<div class="form-group">
 				<div class="col-sm-offset-2 col-sm-10">
-					<button type="submit" class="btn btn-lg btn-success">Change Password</button>
+					<button type="submit" class="btn btn-lg btn-success">Change
+						Password</button>
 				</div>
 			</div>
 		</form>
 	</div>
+	<jsp:include page="footer.html"></jsp:include>
 	<script src="Assets/JS/jquery-3.6.0.min.js"></script>
 	<!-- jquery -->
 	<script src="Assets/Libraries/bootstrap/js/bootstrap.min.js"></script>
 	<!--  bootstrap -->
+	<script src="Assets/Libraries/validate/jquery.validate.min.js"></script>
+	<!-- validate js -->
+	<script src="Assets/JS/forgot.js"></script>
+	<!--  js script -->
 </body>
 </html>

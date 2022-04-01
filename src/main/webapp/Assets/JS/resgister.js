@@ -17,9 +17,7 @@ jQuery.validator.addMethod("phone_regex", function(value, element) {
 jQuery.validator.addMethod("password_regex", function(value, element) {
 	return this.optional(element) || /^[a-z0-9!@#$%^&*()_\.\-_]{8,30}$/i.test(value);
 }, "Password of atleast 8 characters."); // password check
-jQuery.validator.addMethod("address", function(value,element) {
-	
-});
+
 
 $("#reg_form").validate({
 	rules: {
@@ -31,6 +29,10 @@ $("#reg_form").validate({
 		'user_email': {
 			required: true,
 			email: true,
+			remote: {
+				url: "EmailCheckController",
+				type: "post",
+			}
 		},
 		'user_password': {
 			required: true,
@@ -73,6 +75,7 @@ $("#reg_form").validate({
 		'user_email': {
 			required: "*Please enter your email",
 			email: "*Please enter a valid email address!",
+			remote: "*Email already exists",
 		},
 		'user_password': {
 			required: "*Please enter a password",
@@ -100,7 +103,7 @@ $("#reg_form").validate({
 			required: "*Please enter your city",
 		},
 		'user_state' : {
-			required: "*Please enter your city",
+			required: "*Please enter your State",
 		},
 		'user_photo': {
 			required: "*Please enter a photo",
