@@ -15,18 +15,27 @@
 <link rel="stylesheet" href="Assets/CSS/register.css"></link>
 </head>
 <body>
-	<jsp:include page="header.html"></jsp:include>
+	<jsp:include page="header.jsp"></jsp:include>
 
 	<div class="container">
+		<div class="error text-center">
+			<c:if test="${not empty error}">
+				<c:out value="${error}" />
+			</c:if>
+		</div>
 		<form class="form-horizontal" id="reg_form" method="post"
-			action="RegisterController" enctype="multipart/form-data">
-			<h2 class="text-center">Register</h2>
-
+			action='<c:if test="${requestScope.userData != null}">UpdateController?id=${requestScope.userData.getId()}</c:if><c:if test="${requestScope.userData == null}">RegisterController</c:if>'
+			enctype="multipart/form-data">
+			<h2 class="text-center">
+				<c:if test="${requestScope.userData != null}">Edit Profile</c:if>
+				<c:if test="${requestScope.userData == null}">Register</c:if>
+			</h2>
 			<div class="form-group">
 				<label for="inputName" class="col-sm-2 control-label">Name</label>
 				<div class="col-sm-10">
 					<input type="text" name="user_name" class="form-control"
 						id="inputName"
+						value='<c:out value="${requestScope.userData.getName()}" />'
 						placeholder="Raj">
 				</div>
 			</div>
@@ -35,7 +44,9 @@
 				<div class="col-sm-10">
 					<input type="text" name="user_email" class="form-control"
 						id="inputEmail"
-						placeholder="raj@gmail.com">
+						value='<c:out value="${requestScope.userData.getEmail()}" />'
+						placeholder="raj@gmail.com"
+						<c:if test="${requestScope.userData != null }">disabled</c:if>>
 				</div>
 			</div>
 			<div class="form-group">
@@ -43,6 +54,7 @@
 				<div class="col-sm-10">
 					<input type="password" class="form-control" name="user_password"
 						id="inputPassword"
+						value='<c:out value="${requestScope.userData.getPassword()}" />'
 						placeholder="********">
 				</div>
 			</div>
@@ -52,6 +64,7 @@
 				<div class="col-sm-10">
 					<input type="password" class="form-control" name="confirm_psw"
 						id="inputConfirmPassword"
+						value='<c:out value="${requestScope.userData.getPassword()}" />'
 						placeholder="********">
 				</div>
 			</div>
@@ -61,7 +74,7 @@
 				<div class="col-sm-10">
 					<input type="text" class="form-control" name="user_phone"
 						id="inputPhone"
-						value='<c:out value="${sessionScope.user.getPhone()}" />'
+						value='<c:out value="${requestScope.userData.getPhone()}" />'
 						placeholder="1234567890">
 				</div>
 			</div>
@@ -70,11 +83,11 @@
 				<div class="col-sm-6">
 					<label class="radio-inline"> <input type="radio"
 						id="inputGender1" name="gender" value="male"
-						<c:if test="${sessionScope.user.getGender() == 'male'}"> <%= "Checked" %> </c:if> />
+						<c:if test="${requestScope.userData.getGender() == 'male'}"> Checked </c:if> />
 						Male
 					</label> <label class="radio-inline"> <input type="radio"
 						id="inputGender2" name="gender" value="female"
-						<c:if test="${sessionScope.user.getGender() == 'female'}"><%= "Checked" %></c:if> />
+						<c:if test="${requestScope.userData.getGender() == 'female'}">Checked</c:if> />
 						Female
 					</label>
 				</div>
@@ -84,19 +97,19 @@
 				<div class="col-sm-6">
 					<label class="checkbox-inline"> <input type="checkbox"
 						id="inputLang1" name="lang" value="Java"
-						<c:forEach var="language" items="${sessionScope.user.getLang()}"> <c:if test="${language eq 'Java'}"><%= "checked='checked'" %></c:if> </c:forEach>>
+						<c:forEach var="language" items="${requestScope.userData.getLang()}"> <c:if test="${language eq 'Java'}">checked='checked'</c:if> </c:forEach>>
 						Java
 					</label> <label class="checkbox-inline"> <input type="checkbox"
 						id="inputLang2" name="lang" value="C++"
-						<c:forEach var="language" items="${sessionScope.user.getLang()}"> <c:if test="${language eq 'C++'}"><%= "checked='checked'" %></c:if> </c:forEach>>
+						<c:forEach var="language" items="${requestScope.userData.getLang()}"> <c:if test="${language eq 'C++'}">checked='checked'</c:if> </c:forEach>>
 						C++
 					</label> <label class="checkbox-inline"> <input type="checkbox"
 						id="inputLang3" name="lang" value="Python"
-						<c:forEach var="language" items="${sessionScope.user.getLang()}"> <c:if test="${language eq 'Python'}"><%= "checked='checked'" %></c:if> </c:forEach>>
+						<c:forEach var="language" items="${requestScope.userData.getLang()}"> <c:if test="${language eq 'Python'}">checked='checked'</c:if> </c:forEach>>
 						Python
 					</label> <label class="checkbox-inline"> <input type="checkbox"
 						id="inputLang4" name="lang" value="Kotlin"
-						<c:forEach var="language" items="${sessionScope.user.getLang()}"> <c:if test="${language eq 'Kotlin'}"><%= "checked='checked'" %></c:if> </c:forEach>>
+						<c:forEach var="language" items="${requestScope.userData.getLang()}"> <c:if test="${language eq 'Kotlin'}">checked='checked'</c:if> </c:forEach>>
 						Kotlin
 					</label>
 				</div>
@@ -108,11 +121,11 @@
 					<select id="inputGame" name="games" class="form-control">
 						<option value="">Select</option>
 						<option value="GTA"
-							<c:if test="${sessionScope.user.getGame() == 'GTA'}"> <%= "selected='selected'" %> </c:if>>GTA</option>
+							<c:if test="${requestScope.userData.getGame() == 'GTA'}"> <%= "selected='selected'" %> </c:if>>GTA</option>
 						<option value="Fifa"
-							<c:if test="${sessionScope.user.getGame() == 'Fifa'}"> <%= "selected='selected'" %> </c:if>>Fifa</option>
+							<c:if test="${requestScope.userData.getGame() == 'Fifa'}"> <%= "selected='selected'" %> </c:if>>Fifa</option>
 						<option value="Battlefield"
-							<c:if test="${sessionScope.user.getGame() == 'Battlefield'}"> <%= "selected='selected'" %> </c:if>>Battlefield</option>
+							<c:if test="${requestScope.userData.getGame() == 'Battlefield'}"> <%= "selected='selected'" %> </c:if>>Battlefield</option>
 					</select>
 				</div>
 			</div>
@@ -122,34 +135,60 @@
 				<div class="col-sm-10">
 					<input type="text" class="form-control" name="secQues" id="secQues"
 						placeholder="What is the name of your first school?"
-						value="${sessionScope.user.getSecQues()}">
+						value="${requestScope.userData.getSecQues()}">
 				</div>
 			</div>
 			<div id="main-container">
 				<div class="container-item">
-					<c:forEach var="address" items="sessionScope.user.getAddress()">
-					<div class="form-group">
-						<label for="inputAddress" class="col-sm-2 control-label">Address</label>
-						<div class="col-sm-10">
-							<div class="col-sm-4">
-								<input type="text" name="user_street" class="form-control"
-									placeholder="Street">
+					<c:if test="${requestScope.userData != null }">
+						<c:forEach var="address"
+							items="${requestScope.userData.getAddresses()}">
+							<div class="form-group">
+								<label for="inputAddress" class="col-sm-2 control-label">Address</label>
+								<div class="col-sm-10">
+									<div class="col-sm-4">
+										<input type="text" name="user_street" class="form-control"
+											placeholder="Street" value="${address.getStreet()}">
+									</div>
+									<div class="col-sm-3">
+										<input type="text" name="user_city" class="form-control"
+											placeholder="City" value="${address.getCity()}">
+									</div>
+									<div class="col-sm-3">
+										<input type="text" name="user_state" class="form-control"
+											placeholder="State" value="${address.getState()}">
+									</div>
+									<div class="col-sm-2">
+										<a href="javascript:void(0)"
+											class="remove-item btn btn-sm btn-danger">Delete</a>
+									</div>
+								</div>
 							</div>
-							<div class="col-sm-3">
-								<input type="text" name="user_city" class="form-control"
-									placeholder="City">
-							</div>
-							<div class="col-sm-3">
-								<input type="text" name="user_state" class="form-control"
-									placeholder="State">
-							</div>
-							<div class="col-sm-2">
-								<a href="javascript:void(0)"
-									class="remove-item btn btn-sm btn-danger">Delete</a>
+						</c:forEach>
+					</c:if>
+					<c:if test="${requestScope.userData == null}">
+						<div class="form-group">
+							<label for="inputAddress" class="col-sm-2 control-label">Address</label>
+							<div class="col-sm-10">
+								<div class="col-sm-4">
+									<input type="text" name="user_street" class="form-control"
+										placeholder="Street">
+								</div>
+								<div class="col-sm-3">
+									<input type="text" name="user_city" class="form-control"
+										placeholder="City">
+								</div>
+								<div class="col-sm-3">
+									<input type="text" name="user_state" class="form-control"
+										placeholder="State">
+								</div>
+								<div class="col-sm-2">
+									<a href="javascript:void(0)"
+										class="remove-item btn btn-sm btn-danger">Delete</a>
+								</div>
 							</div>
 						</div>
-					</div>
-					</c:forEach>
+					</c:if>
 				</div>
 			</div>
 			<div class="col-sm-offset-2 col-sm-10">
@@ -158,19 +197,41 @@
 			</div>
 			<div class="form-group">
 				<label for="inputPhoto" class="col-sm-2 control-label">Photo</label>
-				<div class="col-sm-10">
+				<div class="col-sm-5">
 					<input type="file" name="user_photo" class="btn"
-						value="${sessionScope.user.getBase64Photo()}">
+						value="data:image/jpg;base64,${requestScope.userData.getBase64Photo()}">
+				</div>
+				<c:if test="${requestScope.userData != null }">
+					<div class="col-sm-5">
+
+						<img class="img-circle img-thumbnail img-responsive"
+							alt="profilePic"
+							src="data:image/jpg;base64,${requestScope.userData.getBase64Photo()}">
+					</div>
+				</c:if>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<c:choose>
+						<c:when test="${sessionScope.admin != null}">
+							<a href="dashboard.jsp">Dashboard</a>
+						</c:when>
+						<c:when test="${requestScope.userData != null }">
+							<a href="home.jsp">Home</a>
+						</c:when>
+						<c:when test="${requestScope.userData == null}">
+							<a href="index.jsp">Already have an account?</a>
+						</c:when>
+					</c:choose>
 				</div>
 			</div>
 			<div class="form-group">
 				<div class="col-sm-offset-2 col-sm-10">
-					<a href="index.jsp">Already have an account?</a>
-				</div>
-			</div>
-			<div class="form-group">
-				<div class="col-sm-offset-2 col-sm-10">
-					<button type="submit" class="btn btn-lg btn-success">Register</button>
+					<button type="submit" class="btn btn-lg btn-success">
+						<c:if test="${requestScope.userData != null }">
+					Update</c:if>
+						<c:if test="${requestScope.userData == null }">Register</c:if>
+					</button>
 					<button type="reset" class="btn btn-lg btn-danger btn-reset">Reset</button>
 				</div>
 			</div>

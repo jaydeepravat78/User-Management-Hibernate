@@ -18,4 +18,6 @@ public interface UserService {
 	public boolean checkEmail(String email);
 
 	public User getUser(int id);
+	
+	public boolean updateUser(User u);
 }

@@ -27,13 +27,16 @@ html, body {
 	padding: 0;
 	font-family: 'Poppins', sans-serif;
 }
+
 #users-table .odd {
 	background-color: aliceblue;
 }
+
 #users-table thead {
 	background-color: #5cb85c;
 	color: white;
 }
+
 #users-table tbody tr:hover {
 	background-color: #f6f6f6;
 }
@@ -41,10 +44,9 @@ html, body {
 </head>
 <body>
 	<c:if test="${sessionScope.admin != null}">
-		<jsp:include page="header.html"></jsp:include>
+		<jsp:include page="header.jsp"></jsp:include>
 		<div class="container">
-			<table id="users-table"
-				class="table table-striped">
+			<table id="users-table" class="table table-striped">
 				<!-- cell-border hover stripe -->
 				<!-- Table for data -->
 				<thead>
@@ -64,8 +66,13 @@ html, body {
 				</tbody>
 			</table>
 			<a href="registration.jsp" class="btn btn-lg btn-success">Add
-				User</a> <a href="#" class="btn btn-lg btn-primary">Add Users from
-				excel</a> <a href="LogoutController" class="btn btn-lg btn-danger">Logout</a>
+				User</a> <a href="LogoutController" class="btn btn-lg btn-danger">Logout</a>
+			<br>
+			<br>
+			<form class="form-horizontal">
+				<input type="file" name="excelFile"> <br> <input
+					type="submit" value="Add Users" class="btn btn-success btn-lg">
+			</form>
 		</div>
 	</c:if>
 	<jsp:include page="footer.html"></jsp:include>

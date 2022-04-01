@@ -1,94 +1,98 @@
 package utility;
 
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
 
+import models.User;
 import services.UserServiceImpl;
 import services.UserService;
 
 public class Validation {
-	public static Map<String, String> error = new HashMap<>();
 
+	public static String error = "";
+	private static User user;
+	
+	public static void getUser(User u) {
+		user = u;
+	}
 	public static void checkName(String name) {
 		if (name.isEmpty())
-			error.put("user_name", "*Name field cannot be empty");
+			error += "*Name field cannot be empty\n";
 		else if (!Pattern.matches("^[a-zA-Z]+$", name))
-			error.put("user_name", "*Name should only contains alphabet");
+			error += "*Name should only contains alphabet\n";
 
 	}
 
 	public static void checkEmail(String email) {
 		UserService service = new UserServiceImpl();
 		if (email.isEmpty())
-			error.put("user_email", "*Email should not be empty");
+			error += "*Email should not be empty\n";
 		else if (!Pattern.matches("^(.+)@(.+)$", email))
-			error.put("user_email", "*Please enter a valid email");
+			error += "*Please enter a valid email\n";
 		else if (service.checkEmail(email))
-			error.put("user_email", "*Email already exists");
+			error += "*Email already exists\n";
 	}
 
 	public static void checkPhone(String phone) {
 		if (phone.isEmpty())
-			error.put("user_phone", "*Phone should not be empty");
+			error += "*Phone should not be empty";
 		else if (!Pattern.matches("[7-9][0-9]{9}", phone))
-			error.put("user_phone", "*Please enter a valid phone number");
+			error += "*Please enter a valid phone number\n";
 	}
 
 	public static void checkLang(String[] lang) {
 		if (lang == null)
-			error.put("lang", "*Select atleast one language");
+			error += "*Select atleast one language\n";
 	}
 
 	public static void checkGender(String gender) {
 		if (gender == null)
-			error.put("gender", "*Please select gender");
+			error += "*Please select gender\n";
 	}
 
 	public static void checkGame(String game) {
 		if (game.isEmpty())
-			error.put("games", "*Please select a game");
+			error += "*Please select a game\n";
 	}
 
 	public static void checkSecQues(String secQues) {
 		if (secQues.isEmpty())
-			error.put("secQues", "*Please answer this question");
+			error += "*Please answer this question\n";
 	}
 
 	public static void checkPassword(String Password) {
 		if (Password.isEmpty())
-			error.put("user_password", "*Please enter a password");
+			error += "*Please enter a password";
 		else if (!Pattern.matches("^[a-z0-9!@#$%^&*()_\\.\\-_]{8,30}$", Password))
-			error.put("user_password", "*Password should have minimum 8 character");
+			error += "*Password should have minimum 8 character\n";
 	}
 
 	public static void confirmPassword(String password, String confirmPassword) {
 		if (password.equals(confirmPassword))
-			error.put("confirm_psw", "*Password doesn't match");
+			error += "*Password doesn't match\n";
 
 	}
 
 	public static void checkStreet(String[] street) {
 		for (int i = 0; i < street.length; i++)
 			if (street[i].isEmpty())
-				error.put("user_street", "*Please enter a street");
+				error += "*Please enter a street\n";
 	}
 
 	public static void checkCity(String[] city) {
 		for (int i = 0; i < city.length; i++)
 			if (city[i].isEmpty())
-				error.put("user_city", "*Please enter a city");
+				error += "*Please enter a city\n";
 	}
 
 	public static void checkState(String[] state) {
 		for (int i = 0; i < state.length; i++)
 			if (state[i].isEmpty())
-				error.put("user_state", "*Please enter a state");
+				error += "*Please enter a state\n";
 	}
 
 	public static void checkPhoto(InputStream photo) {
 		if (photo == null)
-			error.put("user_photo", "*Please enter a photo");
+			error += "*Please enter a photo\n";
 	}
 }

@@ -40,7 +40,7 @@ $(document).ready(function() {
 			    "targets": 6,
 			    className: 'dt-body-center',
 			    "render": function ( data, type, row, meta ) {
-			      return '<a class="btn btn-sm btn-warning" href="EditController?id=' + row.id+'">Edit</a>';
+			      return '<a class="btn btn-sm btn-warning" href="UpdateController?id=' + row.id+'">Edit</a>';
 			    }
 		  	}, 
         	{

@@ -29,7 +29,7 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 </style>
 </head>
 <body>
-	<jsp:include page="header.html"></jsp:include>
+	<jsp:include page="header.jsp"></jsp:include>
 	<c:if test="${sessionScope.user != null}">
 		<div class="container text-center">
 			<h2 class="text-center">
@@ -40,7 +40,7 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 				<img class="img-circle img-thumbnail img-responsive profile" alt="profilePic" src="data:image/jpg;base64,${sessionScope.user.getBase64Photo()}">
 			</div>
 			<a href="LogoutController" class="btn btn-danger">Logout</a> <a
-				class="btn btn-primary" href="registration.jsp">Edit Profile</a>
+				class="btn btn-primary" href="UpdateController?id=${sessionScope.user.getId()}">Edit Profile</a>
 		</div>
 	</c:if>
 	<c:if test="${sessionScope.user == null}">

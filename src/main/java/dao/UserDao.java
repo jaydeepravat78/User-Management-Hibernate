@@ -1,7 +1,6 @@
 package dao;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,6 +23,8 @@ public class UserDao implements Dao {
 	private static final String UPDATE_PSW = "update users set password = ? where email = ?";
 	private static final String GET_ALL_USERS = "select * from users where isAdmin = 0";
 	private static final String DELETE_USER = "delete from users where id = ?";
+	private static final String UPDATE_USER = "update users set name = ?, password = ?, phone = ?, gender = ?, lang = ?,  photo = ?, secQuestion = ?, game = ? where id = ?";
+	private static final String GET_USER = "select * from users where id = ?";
 
 	/**
 	 * 
@@ -63,7 +64,7 @@ public class UserDao implements Dao {
 					user.setAdmin(rs.getBoolean("isAdmin"));
 					List<Address> addresses = new ArrayList<>();
 					user.setPhoto(rs.getBinaryStream("photo"));
-					if(user.getPhoto() != null) {
+					if (user.getPhoto() != null) {
 						byte[] imageBytes;
 						try {
 							imageBytes = user.getPhoto().readAllBytes();
@@ -76,7 +77,7 @@ public class UserDao implements Dao {
 					stmt2 = con.prepareStatement(GET_ALL_USER_ADDRESS);
 					stmt2.setInt(1, user.getId());
 					ResultSet rs2 = stmt2.executeQuery();
-					while(rs2.next()) {
+					while (rs2.next()) {
 						Address address = new Address();
 						address.setStreet(rs2.getString("street"));
 						address.setCity(rs2.getString("city"));
@@ -151,8 +152,7 @@ public class UserDao implements Dao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			if (con != null)
-				con = ManagementConnection.getUsersConnection().destroyConnection();
+			con = ManagementConnection.getUsersConnection().destroyConnection();
 			if (stmt1 != null)
 				try {
 					stmt1.close();
@@ -192,7 +192,8 @@ public class UserDao implements Dao {
 			stmt1.setString(1, user.getEmail());
 			ResultSet rs = stmt1.executeQuery();
 			if (rs.next()) {
-				if (user.getGame().equals(rs.getString("game")) && user.getSecQues().equals(rs.getString("secQuestion"))) {
+				if (user.getGame().equals(rs.getString("game"))
+						&& user.getSecQues().equals(rs.getString("secQuestion"))) {
 					stmt2 = con.prepareStatement(UPDATE_PSW);
 					stmt2.setString(1, user.getPassword());
 					stmt2.setString(2, user.getEmail());
@@ -203,8 +204,7 @@ public class UserDao implements Dao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			if (con != null)
-				con = ManagementConnection.getUsersConnection().destroyConnection();
+			con = ManagementConnection.getUsersConnection().destroyConnection();
 			if (stmt1 != null)
 				try {
 					stmt1.close();
@@ -250,8 +250,7 @@ public class UserDao implements Dao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			if (con != null)
-				con = ManagementConnection.getUsersConnection().destroyConnection();
+			con = ManagementConnection.getUsersConnection().destroyConnection();
 			if (stmt != null)
 				try {
 					stmt.close();
@@ -280,8 +279,7 @@ public class UserDao implements Dao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			if (con != null)
-				con = ManagementConnection.getUsersConnection().destroyConnection();
+			con = ManagementConnection.getUsersConnection().destroyConnection();
 			if (stmt != null)
 				try {
 					stmt.close();
@@ -305,8 +303,7 @@ public class UserDao implements Dao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			if (con != null)
-				con = ManagementConnection.getUsersConnection().destroyConnection();
+			con = ManagementConnection.getUsersConnection().destroyConnection();
 			if (stmt != null)
 				try {
 					stmt.close();
@@ -316,8 +313,92 @@ public class UserDao implements Dao {
 		}
 		return false;
 	}
+
 	@Override
 	public User getUserData(int id) {
-		return null;
+		User user = null;
+		Connection con = null;
+		PreparedStatement stmt = null;
+		PreparedStatement stmt2 = null;
+		try {
+			con = ManagementConnection.getUsersConnection().getConnection();
+			stmt = con.prepareStatement(GET_USER);
+			stmt.setInt(1, id);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+					user = new User();
+					user.setId(rs.getInt("id"));
+					user.setName(rs.getString("name"));
+					user.setEmail(rs.getString("email"));
+					user.setPassword(KeyGeneration.decrypt(rs.getString("password")));
+					user.setGender(rs.getString("gender"));
+					user.setPhone(rs.getString("phone"));
+					user.setLang(rs.getString("lang").split(" "));
+					user.setGame(rs.getString("game"));
+					user.setSecQues(rs.getString("secQuestion"));
+					user.setAdmin(rs.getBoolean("isAdmin"));
+					List<Address> addresses = new ArrayList<>();
+					user.setPhoto(rs.getBinaryStream("photo"));
+					if (user.getPhoto() != null) {
+						byte[] imageBytes;
+						try {
+							imageBytes = user.getPhoto().readAllBytes();
+							String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+							user.setBase64Photo(base64Image);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					stmt2 = con.prepareStatement(GET_ALL_USER_ADDRESS);
+					stmt2.setInt(1, user.getId());
+					ResultSet rs2 = stmt2.executeQuery();
+					while (rs2.next()) {
+						Address address = new Address();
+						address.setStreet(rs2.getString("street"));
+						address.setCity(rs2.getString("city"));
+						address.setState(rs2.getString("state"));
+						addresses.add(address);
+					}
+					user.setAddresses(addresses);
+				}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			con = ManagementConnection.getUsersConnection().destroyConnection();
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return user;
+	}
+
+	public boolean updateUserData(User user) {
+		Connection con = null;
+		PreparedStatement stmt = null;
+		try {
+			con = ManagementConnection.getUsersConnection().getConnection();
+			stmt = con.prepareStatement(UPDATE_USER);
+			stmt.setString(1, user.getName());
+			stmt.setString(2, user.getPassword());
+			stmt.setString(3, user.getPhone());
+			stmt.setString(4, user.getGender());
+			String language = "";
+			String[] lang = user.getLang();
+			for (int i = 0; i < lang.length; i++) {
+				language += lang[i] + " ";
+			}
+			stmt.setString(5, language);
+			stmt.setBlob(6, user.getPhoto());
+			stmt.setString(7, user.getSecQues());
+			stmt.setString(8, user.getGame());
+			stmt.setInt(9, user.getId());
+			int i = stmt.executeUpdate();
+			return i == 1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

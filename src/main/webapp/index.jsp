@@ -17,14 +17,16 @@
 
 </head>
 <body>
-	<jsp:include page="header.html"></jsp:include>
+	<jsp:include page="header.jsp"></jsp:include>
 	<div class="container">
+
+		<div class="error text-center">
+			<c:if test="${not empty errorMessage}">
+				<c:out value="${errorMessage}" />
+			</c:if>
+		</div>
 		<form class="form-horizontal uform" action="LoginController"
 			method="Post">
-
-			<div class="error text-center"><c:if test="${not empty errorMessage}">
-					<c:out value="${errorMessage}" />
-				</c:if></div>
 			<h2 class="text-center">Login</h2>
 			<div class="form-group">
 				<label for="inputEmail" class="col-sm-2 control-label">Email</label>
