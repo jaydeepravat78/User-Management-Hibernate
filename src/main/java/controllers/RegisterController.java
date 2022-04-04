@@ -3,6 +3,7 @@ package controllers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -35,18 +36,6 @@ public class RegisterController extends HttpServlet {
 	 */
 	private static final Logger log = Logger.getLogger(RegisterController.class.getClass());
 
-	public RegisterController() {
-		super();
-	}
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		doPost(request, response);
-	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
@@ -74,9 +63,8 @@ public class RegisterController extends HttpServlet {
 		user.setGame(request.getParameter("games"));
 		user.setSecQues(request.getParameter("secQues"));
 		Part filePart = request.getPart("user_photo"); 
-		InputStream photo = filePart.getInputStream();
-		user.setPhoto(photo);
-		
+		InputStream userPic = filePart.getInputStream();
+		user.setPhoto(userPic);
 		List<Address> addresses = new ArrayList<>();
 		String[] street = request.getParameterValues("user_street");
 		String[] city = request.getParameterValues("user_city");

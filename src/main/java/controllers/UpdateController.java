@@ -2,6 +2,8 @@ package controllers;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
+import models.Address;
 import models.User;
 import services.UserService;
 import services.UserServiceImpl;
@@ -24,13 +27,6 @@ import services.UserServiceImpl;
 public class UpdateController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public UpdateController() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -64,7 +60,20 @@ public class UpdateController extends HttpServlet {
 		Part filePart = request.getPart("user_photo");
 		InputStream photo = filePart.getInputStream();
 		user.setPhoto(photo);
+		List<Address> addresses = new ArrayList<>();
+		String[] street = request.getParameterValues("user_street");
+		String[] city = request.getParameterValues("user_city");
+		String[] state = request.getParameterValues("user_state");
+		for (int i = 0; i < street.length; i++) {
+			Address address = new Address();
+			address.setStreet(street[i]);
+			address.setCity(city[i]);
+			address.setState(state[i]);
+			addresses.add(address);
+		}
+		user.setAddresses(addresses);
 		UserService service = new UserServiceImpl();
+		
 		if (service.updateUser(user)) {
 			if (session != null && session.getAttribute("admin") != null) {
 				response.sendRedirect("dashboard.jsp");

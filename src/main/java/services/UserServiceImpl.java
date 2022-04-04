@@ -2,13 +2,13 @@ package services;
 
 import java.util.List;
 
-import dao.Dao;
 import dao.UserDao;
+import dao.UserDaoImpl;
 import models.User;
 import utility.KeyGeneration;
 
 public class UserServiceImpl implements UserService{
-	public static final Dao dao = new UserDao();
+	public static final UserDao dao = new UserDaoImpl();
 
 	@Override
 	public User login(String email, String password) {
@@ -52,5 +52,10 @@ public class UserServiceImpl implements UserService{
 	public boolean updateUser(User u) {
 		u.setPassword(KeyGeneration.encrypt(u.getPassword()));
 		return dao.updateUserData(u);
+	}
+	@Override
+	public boolean addAllUsers(List<User> users) {
+		// TODO Auto-generated method stub
+		return dao.addMultipleUsers(users);
 	}
 }

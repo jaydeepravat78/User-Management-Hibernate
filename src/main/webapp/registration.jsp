@@ -139,10 +139,10 @@
 				</div>
 			</div>
 			<div id="main-container">
-				<div class="container-item">
-					<c:if test="${requestScope.userData != null }">
-						<c:forEach var="address"
-							items="${requestScope.userData.getAddresses()}">
+				<c:if test="${requestScope.userData != null }">
+					<c:forEach var="address"
+						items="${requestScope.userData.getAddresses()}">
+						<div class="container-item">
 							<div class="form-group">
 								<label for="inputAddress" class="col-sm-2 control-label">Address</label>
 								<div class="col-sm-10">
@@ -164,9 +164,11 @@
 									</div>
 								</div>
 							</div>
-						</c:forEach>
-					</c:if>
-					<c:if test="${requestScope.userData == null}">
+						</div>
+					</c:forEach>
+				</c:if>
+				<c:if test="${requestScope.userData == null}">
+					<div class="container-item">
 						<div class="form-group">
 							<label for="inputAddress" class="col-sm-2 control-label">Address</label>
 							<div class="col-sm-10">
@@ -188,8 +190,8 @@
 								</div>
 							</div>
 						</div>
-					</c:if>
-				</div>
+					</div>
+				</c:if>
 			</div>
 			<div class="col-sm-offset-2 col-sm-10">
 				<a id="add-more" href="javascript:;"
@@ -204,9 +206,11 @@
 				<c:if test="${requestScope.userData != null }">
 					<div class="col-sm-5">
 
-						<img class="img-circle img-thumbnail img-responsive"
-							alt="profilePic"
-							src="data:image/jpg;base64,${requestScope.userData.getBase64Photo()}">
+						<c:if test="${not empty sessionScope.user.getBase64Photo()}">
+							<img class="img-circle img-thumbnail img-responsive profile"
+								alt="profilePic"
+								src="data:image/jpg;base64,${requestScope.userData.getBase64Photo()}">
+						</c:if>
 					</div>
 				</c:if>
 			</div>

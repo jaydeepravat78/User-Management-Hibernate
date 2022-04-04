@@ -19,13 +19,13 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 <link rel="stylesheet" href="Assets/Fonts/font.css"></link>
 
 <style>
-	.profile {
-		width: 250px;
-		height: 250px;
-		max-height: 250px;
-		display: block;
-		margin: 30px auto;
-	}
+.profile {
+	width: 150px;
+	height: 150px;
+	max-height: 150px;
+	display: block;
+	margin: 30px auto;
+}
 </style>
 </head>
 <body>
@@ -36,11 +36,33 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 				Welcome
 				<c:out value="${sessionScope.user.getName()}" />
 			</h2>
-			<div>
-				<img class="img-circle img-thumbnail img-responsive profile" alt="profilePic" src="data:image/jpg;base64,${sessionScope.user.getBase64Photo()}">
+			<div class="text-center">
+				<c:if test="${sessionScope.user.getPhoto() != null}">
+					<img class="img-circle img-thumbnail img-responsive profile"
+						alt="profilePic"
+						src="data:image/jpg;base64,${sessionScope.user.getBase64Photo()}">
+				</c:if>
+				<h4>
+					Email:
+					<c:out value="${sessionScope.user.getEmail() }"></c:out>
+				</h4>
+				<h4>
+					Number:
+					<c:out value="${sessionScope.user.getPhone() }"></c:out>
+				</h4>
+				<h4>
+					Gender:
+					<c:out value="${sessionScope.user.getGender() }"></c:out>
+				</h4>
+				<h4>
+					Game:
+					<c:out value="${sessionScope.user.getGame() }"></c:out>
+				</h4>
 			</div>
 			<a href="LogoutController" class="btn btn-danger">Logout</a> <a
-				class="btn btn-primary" href="UpdateController?id=${sessionScope.user.getId()}">Edit Profile</a>
+				class="btn btn-primary"
+				href="UpdateController?id=${sessionScope.user.getId()}">Edit
+				Profile</a>
 		</div>
 	</c:if>
 	<c:if test="${sessionScope.user == null}">

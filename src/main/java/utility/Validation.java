@@ -9,90 +9,99 @@ import services.UserService;
 
 public class Validation {
 
-	public static String error = "";
-	private static User user;
-	
-	public static void getUser(User u) {
-		user = u;
-	}
-	public static void checkName(String name) {
+	public static String checkName(String name) {
 		if (name.isEmpty())
-			error += "*Name field cannot be empty\n";
+			return "*Name field cannot be empty\n";
 		else if (!Pattern.matches("^[a-zA-Z]+$", name))
-			error += "*Name should only contains alphabet\n";
-
+			return "*Name should only contains alphabet\n";
+		else
+			return "";
 	}
 
-	public static void checkEmail(String email) {
+	public static String checkEmail(String email) {
 		UserService service = new UserServiceImpl();
 		if (email.isEmpty())
-			error += "*Email should not be empty\n";
+			return "*Email should not be empty\n";
 		else if (!Pattern.matches("^(.+)@(.+)$", email))
-			error += "*Please enter a valid email\n";
+			return "*Please enter a valid email\n";
 		else if (service.checkEmail(email))
-			error += "*Email already exists\n";
+			return "*Email already exists\n";
+		else
+			return "";
 	}
 
-	public static void checkPhone(String phone) {
+	public static String checkPhone(String phone) {
 		if (phone.isEmpty())
-			error += "*Phone should not be empty";
+			return "*Phone should not be empty";
 		else if (!Pattern.matches("[7-9][0-9]{9}", phone))
-			error += "*Please enter a valid phone number\n";
+			return "*Please enter a valid phone number\n";
+		else
+			return "";
 	}
 
-	public static void checkLang(String[] lang) {
+	public static String checkLang(String[] lang) {
 		if (lang == null)
-			error += "*Select atleast one language\n";
+			return "*Select atleast one language\n";
+		else
+			return "";
 	}
 
-	public static void checkGender(String gender) {
+	public static String checkGender(String gender) {
 		if (gender == null)
-			error += "*Please select gender\n";
+			return "*Please select gender\n";
+		else
+			return "";
 	}
 
-	public static void checkGame(String game) {
+	public static String checkGame(String game) {
 		if (game.isEmpty())
-			error += "*Please select a game\n";
+			return "*Please select a game\n";
+		else
+			return "";
 	}
 
-	public static void checkSecQues(String secQues) {
+	public static String checkSecQues(String secQues) {
 		if (secQues.isEmpty())
-			error += "*Please answer this question\n";
+			return "*Please answer this question\n";
+		else
+			return "";
 	}
 
-	public static void checkPassword(String Password) {
+	public static String checkPassword(String Password) {
 		if (Password.isEmpty())
-			error += "*Please enter a password";
+			return "*Please enter a password";
 		else if (!Pattern.matches("^[a-z0-9!@#$%^&*()_\\.\\-_]{8,30}$", Password))
-			error += "*Password should have minimum 8 character\n";
+			return "*Password should have minimum 8 character\n";
+		else
+			return "";
 	}
 
-	public static void confirmPassword(String password, String confirmPassword) {
+	public static String confirmPassword(String password, String confirmPassword) {
 		if (password.equals(confirmPassword))
-			error += "*Password doesn't match\n";
-
+			return "*Password doesn't match\n";
+		else
+			return "";
 	}
 
-	public static void checkStreet(String[] street) {
+	public static String checkStreet(String[] street) {
 		for (int i = 0; i < street.length; i++)
 			if (street[i].isEmpty())
-				error += "*Please enter a street\n";
+				return "*Please enter a street\n";
+		return "";
 	}
 
-	public static void checkCity(String[] city) {
+	public static String checkCity(String[] city) {
 		for (int i = 0; i < city.length; i++)
 			if (city[i].isEmpty())
-				error += "*Please enter a city\n";
+				return "*Please enter a city\n";
+		return "";
 	}
 
-	public static void checkState(String[] state) {
+	public static String checkState(String[] state) {
 		for (int i = 0; i < state.length; i++)
 			if (state[i].isEmpty())
-				error += "*Please enter a state\n";
+				return "*Please enter a state\n";
+		return "";
 	}
 
-	public static void checkPhoto(InputStream photo) {
-		if (photo == null)
-			error += "*Please enter a photo\n";
-	}
 }

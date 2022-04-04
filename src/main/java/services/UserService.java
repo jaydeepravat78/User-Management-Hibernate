@@ -20,4 +20,6 @@ public interface UserService {
 	public User getUser(int id);
 	
 	public boolean updateUser(User u);
+	
+	public boolean addAllUsers(List<User> users);
 }

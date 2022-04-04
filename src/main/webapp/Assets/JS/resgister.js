@@ -64,9 +64,6 @@ $("#reg_form").validate({
 		'user_state' : {
 			required: true,
 		},
-		'user_photo': {
-			required: true,
-		}
 	},
 	messages: {
 		'user_name': {
@@ -104,9 +101,6 @@ $("#reg_form").validate({
 		},
 		'user_state' : {
 			required: "*Please enter your State",
-		},
-		'user_photo': {
-			required: "*Please enter a photo",
 		}
 	},
 	errorPlacement: function(error, element) {

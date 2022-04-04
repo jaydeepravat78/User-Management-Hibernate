@@ -21,31 +21,18 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 <link rel="stylesheet"
 	href="Assets/Libraries/datatable/datatables.min.css">
 <!--  datatable -->
-<style>
-html, body {
-	margin: 0;
-	padding: 0;
-	font-family: 'Poppins', sans-serif;
-}
-
-#users-table .odd {
-	background-color: aliceblue;
-}
-
-#users-table thead {
-	background-color: #5cb85c;
-	color: white;
-}
-
-#users-table tbody tr:hover {
-	background-color: #f6f6f6;
-}
-</style>
+<link rel="stylesheet" href="Assets/CSS/dashboard.css">
 </head>
 <body>
 	<c:if test="${sessionScope.admin != null}">
 		<jsp:include page="header.jsp"></jsp:include>
+
 		<div class="container">
+			<nav class="text-right">
+				<a href="registration.jsp" class="btn btn-success">Add User</a> <a
+					href="LogoutController" class="btn btn-danger">Logout</a>
+			</nav>
+			<br>
 			<table id="users-table" class="table table-striped">
 				<!-- cell-border hover stripe -->
 				<!-- Table for data -->
@@ -65,17 +52,16 @@ html, body {
 				<tbody>
 				</tbody>
 			</table>
-			<a href="registration.jsp" class="btn btn-lg btn-success">Add
-				User</a> <a href="LogoutController" class="btn btn-lg btn-danger">Logout</a>
-			<br>
-			<br>
-			<form class="form-horizontal">
-				<input type="file" name="excelFile"> <br> <input
-					type="submit" value="Add Users" class="btn btn-success btn-lg">
+			<form class="form-inline" action="UsersController" method="post"
+				enctype="multipart/form-data">
+				<input type="file" name="excelFile" class="btn-primary form-control"> 
+				<input type="submit" value="Import Users"
+					class="btn btn-success btn-lg">
 			</form>
+
 		</div>
+		<jsp:include page="footer.html"></jsp:include>
 	</c:if>
-	<jsp:include page="footer.html"></jsp:include>
 	<c:if test="${sessionScope.admin == null}">
 		<c:redirect url="index.jsp" />
 	</c:if>
