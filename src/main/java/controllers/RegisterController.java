@@ -54,16 +54,17 @@ public class RegisterController extends HttpServlet {
 			redirect += "index.jsp";
 		
 		User  user = new User();
-		user.setName(request.getParameter("user_name"));
-		user.setEmail(request.getParameter("user_email"));
-		user.setPhone(request.getParameter("user_phone"));
-		user.setPassword(request.getParameter("user_password"));
-		user.setGender(request.getParameter("gender"));
+		user.setName(request.getParameter("user_name").trim());
+		user.setEmail(request.getParameter("user_email").trim());
+		user.setPhone(request.getParameter("user_phone").trim());
+		user.setPassword(request.getParameter("user_password").trim());
+		user.setGender(request.getParameter("gender").trim());
 		user.setLang(request.getParameterValues("lang"));
-		user.setGame(request.getParameter("games"));
-		user.setSecQues(request.getParameter("secQues"));
+		user.setGame(request.getParameter("games").trim().trim());
+		user.setSecQues(request.getParameter("secQues").trim());
 		Part filePart = request.getPart("user_photo"); 
 		InputStream userPic = filePart.getInputStream();
+		
 		user.setPhoto(userPic);
 		List<Address> addresses = new ArrayList<>();
 		String[] street = request.getParameterValues("user_street");
@@ -71,9 +72,9 @@ public class RegisterController extends HttpServlet {
 		String[] state = request.getParameterValues("user_state");
 		for(int i = 0; i < street.length; i++) {
 			Address address = new Address();
-			address.setStreet(street[i]);
-			address.setCity(city[i]);
-			address.setState(state[i]);
+			address.setStreet(street[i].trim());
+			address.setCity(city[i].trim());
+			address.setState(state[i].trim());
 			addresses.add(address);
 		}
 		user.setAddresses(addresses);

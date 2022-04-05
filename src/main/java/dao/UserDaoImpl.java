@@ -31,13 +31,19 @@ public class UserDaoImpl implements UserDao {
 	private static final String UPDATE_USER = "update users set name = ?, password = ?, phone = ?, gender = ?, lang = ?,  photo = ?, secQuestion = ?, game = ? where id = ?";
 	private static final String GET_USER = "select * from users where id = ?";
 	private static final String ADD_USERS = "insert into users (name, email, password, phone, gender, lang, isAdmin, game, secQuestion) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private static final String UPDATE_ADDRESS = "update addresses set street = ?, city = ?, state = ? where address_id = ?";
+	private static final String DElETE_ADDRESS = "delete from addresses where address_id = ?";
 
 	/**
 	 * 
+	 * <p>
+	 * The following method check if user is autorized or not if so it return all
+	 * the data from database
+	 * </p>
 	 * 
-	 * @param email, password
+	 * @param email, password email and password that user enters
 	 * @return User {@link User}
-	 * @throws SQLException
+	 * @throws SQLException if there is error in sql
 	 * 
 	 * 
 	 */
@@ -105,8 +111,12 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	/**
+	 * <p>
+	 * The following method add a user details in database
+	 * </p>
+	 * 
 	 * @param user {@link User}
-	 * @throws SQLException The following method add a user in database
+	 * @throws SQLException
 	 * 
 	 */
 	@Override
@@ -131,6 +141,7 @@ public class UserDaoImpl implements UserDao {
 			stmt1.setString(6, language);
 			stmt1.setInt(7, 0);
 			stmt1.setString(8, user.getGame());
+
 			stmt1.setBlob(9, user.getPhoto());
 			stmt1.setString(10, user.getSecQues());
 			int i = stmt1.executeUpdate();
@@ -142,14 +153,16 @@ public class UserDaoImpl implements UserDao {
 					int id = rs.getInt("id");
 					stmt3 = con.prepareStatement(ADD_ADDRESS);
 					List<Address> addresses = user.getAddresses();
-					for (Address address : addresses) {
-						stmt3.setInt(1, id);
-						stmt3.setString(2, address.getStreet());
-						stmt3.setString(3, address.getCity());
-						stmt3.setString(4, address.getState());
-						stmt3.addBatch();
+					if (addresses != null) {
+						for (Address address : addresses) {
+							stmt3.setInt(1, id);
+							stmt3.setString(2, address.getStreet());
+							stmt3.setString(3, address.getCity());
+							stmt3.setString(4, address.getState());
+							stmt3.addBatch();
+						}
+						stmt3.executeBatch();
 					}
-					stmt3.executeBatch();
 					return true;
 				}
 			}
@@ -180,9 +193,13 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	/**
+	 * 
+	 * <p>
+	 * The following method update the password of user if user is authorized
+	 * </p>
+	 * 
 	 * @param user {@link User}
-	 * @throws SQLException The following method update the password of user if
-	 *                      valid
+	 * @throws SQLException
 	 * 
 	 */
 	@Override
@@ -226,9 +243,14 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	/**
+	 * 
+	 * <p>
+	 * The following get all user details from database except admin
+	 * </p>
+	 * 
 	 * @return List of users
-	 * @exception SQLException The following get all user data from database except
-	 *                         Admin
+	 * @exception SQLException
+	 * 
 	 * 
 	 */
 	@Override
@@ -266,18 +288,23 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	/**
+	 * 
+	 * <p>
+	 * The following method delete a user details from the database
+	 * </p>
+	 * 
 	 * @param id
-	 * @exception SQLException The following method delete a user from the database
+	 * @exception SQLException
 	 * 
 	 */
 	@Override
-	public boolean deleteUser(int id) {
+	public boolean deleteUser(int userId) {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		try {
 			con = ManagementConnection.getUsersConnection().getConnection();
 			stmt = con.prepareStatement(DELETE_USER);
-			stmt.setInt(1, id);
+			stmt.setInt(1, userId);
 			int i = stmt.executeUpdate();
 			return i == 1;
 		} catch (SQLException e) {
@@ -293,6 +320,15 @@ public class UserDaoImpl implements UserDao {
 		return false;
 	}
 
+	/**
+	 * 
+	 * <p>
+	 * The following method check if an email already exists or not in the database
+	 * </p>
+	 * 
+	 * @param email
+	 * @exception SQLException
+	 */
 	@Override
 	public boolean emailCheck(String email) {
 		Connection con = null;
@@ -317,6 +353,15 @@ public class UserDaoImpl implements UserDao {
 		return false;
 	}
 
+	/**
+	 * 
+	 * <p>
+	 * The following method return user data of a particular id of user
+	 * </p>
+	 * 
+	 * @param id
+	 * @exception SQLException
+	 */
 	@Override
 	public User getUserData(int id) {
 		User user = null;
@@ -357,6 +402,7 @@ public class UserDaoImpl implements UserDao {
 				ResultSet rs2 = stmt2.executeQuery();
 				while (rs2.next()) {
 					Address address = new Address();
+					address.setAddress_id(rs2.getInt("address_id"));
 					address.setStreet(rs2.getString("street"));
 					address.setCity(rs2.getString("city"));
 					address.setState(rs2.getString("state"));
@@ -377,6 +423,17 @@ public class UserDaoImpl implements UserDao {
 		return user;
 	}
 
+	/**
+	 * 
+	 * <p>
+	 * The following method update the user data
+	 * </p>
+	 * 
+	 * @param user {@link User}
+	 * @exception SQLException
+	 * 
+	 * 
+	 */
 	public boolean updateUserData(User user) {
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -401,37 +458,121 @@ public class UserDaoImpl implements UserDao {
 			return i == 1;
 		} catch (SQLException e) {
 			log.error(e);
+		} finally {
+			con = ManagementConnection.getUsersConnection().destroyConnection();
+			if (stmt != null)
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					log.error(e);
+				}
 		}
 		return false;
 	}
 
+	/**
+	 * 
+	 * <p>
+	 * The following method add new address of the user
+	 * </p>
+	 * 
+	 * @param address id
+	 * @exception SQLException
+	 * 
+	 */
 	@Override
-	public boolean addMultipleUsers(List<User> users) {
+	public boolean addNewAddress(Address address, int id) {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		try {
 			con = ManagementConnection.getUsersConnection().getConnection();
-			stmt = con.prepareStatement(ADD_USERS);
-			for (User user : users) {
-				stmt.setString(1, user.getName());
-				stmt.setString(2, user.getEmail());
-				stmt.setString(3, user.getPassword());
-				stmt.setString(4, user.getPhone());
-				stmt.setString(5, user.getGender());
-				String languages = "";
-				for (int i = 0; i < user.getLang().length; i++) {
-					languages += user.getLang()[i] + " ";
-				}
-				stmt.setString(6, languages);
-				stmt.setInt(7, 0);
-				stmt.setString(8, user.getGame());
-				stmt.setString(9, user.getSecQues());
-				stmt.addBatch();
-			}
-			stmt.executeBatch();
-			return true;
+			stmt = con.prepareStatement(ADD_ADDRESS);
+			stmt.setInt(1, id);
+			stmt.setString(2, address.getStreet());
+			stmt.setString(3, address.getCity());
+			stmt.setString(4, address.getState());
+			int i = stmt.executeUpdate();
+			return i == 1;
 		} catch (SQLException e) {
 			log.error(e);
+		} finally {
+			con = ManagementConnection.getUsersConnection().destroyConnection();
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				log.error(e);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * <p>
+	 * The following method Updates the address of the user
+	 * </p>
+	 * 
+	 * @param address id
+	 * @exception SQLException
+	 * 
+	 */
+
+	@Override
+	public boolean updateOldAddress(Address address) {
+		Connection con = null;
+		PreparedStatement stmt = null;
+		try {
+			con = ManagementConnection.getUsersConnection().getConnection();
+			stmt = con.prepareStatement(UPDATE_ADDRESS);
+			stmt.setString(1, address.getStreet());
+			stmt.setString(2, address.getCity());
+			stmt.setString(3, address.getState());
+			stmt.setInt(4, address.getAddress_id());
+			int i = stmt.executeUpdate();
+			return i == 1;
+		} catch (SQLException e) {
+			log.error(e);
+		} finally {
+			con = ManagementConnection.getUsersConnection().destroyConnection();
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				log.error(e);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * <p>
+	 * The following method deletes the address of user
+	 * </p>
+	 * 
+	 * @param addressId
+	 * @exception SQLException
+	 * 
+	 */
+
+	@Override
+	public boolean deleteOldAddress(int addressId) {
+		Connection con = null;
+		PreparedStatement stmt = null;
+		try {
+			con = ManagementConnection.getUsersConnection().getConnection();
+			stmt = con.prepareStatement(DElETE_ADDRESS);
+			stmt.setInt(1, addressId);
+			int i = stmt.executeUpdate();
+			return i == 1;
+		} catch (SQLException e) {
+			log.error(e);
+		} finally {
+			con = ManagementConnection.getUsersConnection().destroyConnection();
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				log.error(e);
+			}
 		}
 		return false;
 	}

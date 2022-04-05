@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
@@ -40,15 +41,15 @@ public class UsersController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		BasicConfigurator.configure();
-		Part excelFile = request.getPart("excelFile");
+		Part excelFile = request.getPart("excelFile");	
 		InputStream out = excelFile.getInputStream();
 		XSSFWorkbook wb = new XSSFWorkbook(out);
-		XSSFSheet sheet = wb.getSheetAt(0); // creating a Sheet object to retrieve object
-		Iterator<Row> itr = sheet.iterator(); // iterating over excel file
+		XSSFSheet sheet = wb.getSheetAt(0); 
+		Iterator<Row> itr = sheet.iterator(); 
 		List<User> users = new ArrayList<User>();
 		while (itr.hasNext()) {
 			Row row = itr.next();
-			Iterator<Cell> cellIterator = row.cellIterator(); // iterating over each column
+			Iterator<Cell> cellIterator = row.cellIterator(); 
 			User user = new User();
 			while (cellIterator.hasNext()) {
 				Cell cell = cellIterator.next();
@@ -61,8 +62,7 @@ public class UsersController extends HttpServlet {
 					user.setEmail(cell.getStringCellValue());
 					break;
 				case 2:
-					String enrcyptPsw = KeyGeneration.encrypt(cell.getStringCellValue());
-					user.setPassword(enrcyptPsw);
+					user.setPassword(cell.getStringCellValue());
 					break;
 				case 3:
 					user.setPhone(String.valueOf((long) cell.getNumericCellValue()));
@@ -79,18 +79,20 @@ public class UsersController extends HttpServlet {
 				case 7:
 					user.setSecQues(cell.getStringCellValue());
 					break;
-				default:
 				}
 			}
 			users.add(user);
 		}
 
 		UserService service = new UserServiceImpl();
-		if (service.addAllUsers(users)) {
+		String error = service.addAllUsers(users);
+		if (error.isEmpty()) {
 			log.info(users.size() + " users added");
 			response.sendRedirect("dashboard.jsp");
 		} else {
-			log.error("Fail to add users");
+			RequestDispatcher rd = request.getRequestDispatcher("dashboard.jsp");
+			request.setAttribute("errorMessage", error);
+			rd.include(request, response);
 		}
 	}
 }

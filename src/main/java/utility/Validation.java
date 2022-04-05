@@ -1,9 +1,7 @@
 package utility;
 
-import java.io.InputStream;
 import java.util.regex.Pattern;
 
-import models.User;
 import services.UserServiceImpl;
 import services.UserService;
 
@@ -62,7 +60,7 @@ public class Validation {
 
 	public static String checkSecQues(String secQues) {
 		if (secQues.isEmpty())
-			return "*Please answer this question\n";
+			return "*Please answer the Security question\n";
 		else
 			return "";
 	}
@@ -70,7 +68,7 @@ public class Validation {
 	public static String checkPassword(String Password) {
 		if (Password.isEmpty())
 			return "*Please enter a password";
-		else if (!Pattern.matches("^[a-z0-9!@#$%^&*()_\\.\\-_]{8,30}$", Password))
+		else if (Pattern.matches("^[a-z0-9!@#$%^&*()_\\.\\-_]{8,30}$", Password))
 			return "*Password should have minimum 8 character\n";
 		else
 			return "";

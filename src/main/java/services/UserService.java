@@ -2,6 +2,7 @@ package services;
 
 import java.util.List;
 
+import models.Address;
 import models.User;
 
 public interface UserService {
@@ -21,5 +22,8 @@ public interface UserService {
 	
 	public boolean updateUser(User u);
 	
-	public boolean addAllUsers(List<User> users);
+	public String addAllUsers(List<User> users);
+	
+	public boolean updateNewAddress(List<Address> address, int id);
+	
 }

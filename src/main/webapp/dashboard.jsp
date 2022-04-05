@@ -54,13 +54,18 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 			</table>
 			<form class="form-inline" action="UsersController" method="post"
 				enctype="multipart/form-data">
-				<input type="file" name="excelFile" class="btn-primary form-control"> 
-				<input type="submit" value="Import Users"
-					class="btn btn-success btn-lg">
+				<input type="file"
+					accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+					name="excelFile" class="form-control"> <input type="submit"
+					value="Import Users" class="btn btn-success">
+				<span class="error text-center">
+					<c:if test="${not empty errorMessage}">
+						<c:out value="${errorMessage}" />
+					</c:if>
+				</span>
 			</form>
 
 		</div>
-		<jsp:include page="footer.html"></jsp:include>
 	</c:if>
 	<c:if test="${sessionScope.admin == null}">
 		<c:redirect url="index.jsp" />

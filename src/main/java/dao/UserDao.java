@@ -2,6 +2,7 @@ package dao;
 
 import java.util.List;
 
+import models.Address;
 import models.User;
 
 public interface UserDao {
@@ -20,6 +21,10 @@ public interface UserDao {
 	public User getUserData(int id);
 
 	public boolean updateUserData(User u);
-
-	public boolean addMultipleUsers(List<User> users);
+	
+	public boolean addNewAddress(Address address, int id);
+	
+	public boolean updateOldAddress(Address address);
+	
+	public boolean deleteOldAddress(int addressId); 
 }

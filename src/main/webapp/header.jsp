@@ -20,6 +20,7 @@ html, body {
 	background-color: aliceblue;
 	padding: 20px;
 	margin-bottom: 20px;
+	width: 100%;
 }
 
 .bold {

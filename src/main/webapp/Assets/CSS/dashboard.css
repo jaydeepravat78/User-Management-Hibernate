@@ -4,6 +4,8 @@ html, body {
 	font-family: 'Poppins', sans-serif;
 }
 
+
+
 #users-table .odd {
 	background-color: aliceblue;
 }
@@ -15,4 +17,7 @@ html, body {
 
 #users-table tbody tr:hover {
 	background-color: #f6f6f6;
+}
+.error {
+	color: red;
 }

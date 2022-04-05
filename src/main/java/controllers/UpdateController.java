@@ -27,16 +27,14 @@ import services.UserServiceImpl;
 public class UpdateController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		int id = Integer.parseInt(request.getParameter("id"));
 		UserService service = new UserServiceImpl();
-		User u = service.getUser(id);
-		u.setId(id);
-		request.setAttribute("userData", u);
+		User user = service.getUser(id);
+		request.setAttribute("userData", user);
 		RequestDispatcher rd = request.getRequestDispatcher("registration.jsp");
 		rd.forward(request, response);
 	}
@@ -48,37 +46,46 @@ public class UpdateController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		HttpSession session = request.getSession(false);
-		User user = new User();
-		user.setId(Integer.parseInt(request.getParameter("id")));
-		user.setName(request.getParameter("user_name"));
-		user.setPhone(request.getParameter("user_phone"));
-		user.setPassword(request.getParameter("user_password"));
-		user.setGender(request.getParameter("gender"));
-		user.setLang(request.getParameterValues("lang"));
-		user.setGame(request.getParameter("games"));
-		user.setSecQues(request.getParameter("secQues"));
+		UserService service = new UserServiceImpl();
+		User newUserData = new User();
+		newUserData.setId(Integer.parseInt(request.getParameter("id")));
+		newUserData.setName(request.getParameter("user_name").trim());
+		newUserData.setPhone(request.getParameter("user_phone").trim());
+		newUserData.setPassword(request.getParameter("user_password").trim());
+		newUserData.setGender(request.getParameter("gender").trim());
+		newUserData.setLang(request.getParameterValues("lang"));
+		newUserData.setGame(request.getParameter("games").trim());
+		newUserData.setSecQues(request.getParameter("secQues").trim());
 		Part filePart = request.getPart("user_photo");
-		InputStream photo = filePart.getInputStream();
-		user.setPhoto(photo);
-		List<Address> addresses = new ArrayList<>();
+		if (filePart.getSize() > 0) {
+			InputStream userPic = filePart.getInputStream();	
+			newUserData.setPhoto(userPic);
+		}
+		else {
+			newUserData.setPhoto(service.getUser(newUserData.getId()).getPhoto());
+		}
+		List<Address> newAddresses = new ArrayList<>();
 		String[] street = request.getParameterValues("user_street");
 		String[] city = request.getParameterValues("user_city");
 		String[] state = request.getParameterValues("user_state");
+		String[] address_id = request.getParameterValues("address_id");
 		for (int i = 0; i < street.length; i++) {
 			Address address = new Address();
 			address.setStreet(street[i]);
 			address.setCity(city[i]);
 			address.setState(state[i]);
-			addresses.add(address);
+			int addressId = 0;
+			if (!address_id[i].equals(""))
+				addressId = Integer.parseInt(address_id[i]);
+			address.setAddress_id(addressId);
+			newAddresses.add(address);
 		}
-		user.setAddresses(addresses);
-		UserService service = new UserServiceImpl();
-		
-		if (service.updateUser(user)) {
+		if (service.updateUser(newUserData)) {
+			service.updateNewAddress(newAddresses, newUserData.getId());
 			if (session != null && session.getAttribute("admin") != null) {
 				response.sendRedirect("dashboard.jsp");
 			} else if (session != null & session.getAttribute("user") != null) {
-				session.setAttribute("user", service.getUser(user.getId()));
+				session.setAttribute("user", service.getUser(newUserData.getId()));
 				response.sendRedirect("home.jsp");
 			}
 

@@ -158,6 +158,8 @@
 										<input type="text" name="user_state" class="form-control"
 											placeholder="State" value="${address.getState()}">
 									</div>
+									<input type="text" name="address_id"
+										value="${address.getAddress_id()}" hidden="hidden">
 									<div class="col-sm-2">
 										<a href="javascript:void(0)"
 											class="remove-item btn btn-sm btn-danger">Delete</a>
@@ -167,7 +169,8 @@
 						</div>
 					</c:forEach>
 				</c:if>
-				<c:if test="${requestScope.userData == null}">
+				<c:if
+					test="${requestScope.userData == null || requestScope.userData.getAddresses().size() == 0}">
 					<div class="container-item">
 						<div class="form-group">
 							<label for="inputAddress" class="col-sm-2 control-label">Address</label>
@@ -201,9 +204,10 @@
 				<label for="inputPhoto" class="col-sm-2 control-label">Photo</label>
 				<div class="col-sm-5">
 					<input type="file" name="user_photo" class="btn"
+						accept="image/png, image/gif, image/jpeg"
 						value="data:image/jpg;base64,${requestScope.userData.getBase64Photo()}">
 				</div>
-				<c:if test="${requestScope.userData != null }">
+				<c:if test="${requestScope.userData != null}">
 					<div class="col-sm-5">
 
 						<c:if test="${not empty sessionScope.user.getBase64Photo()}">

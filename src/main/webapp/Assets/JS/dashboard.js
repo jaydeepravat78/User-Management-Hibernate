@@ -1,6 +1,7 @@
 $(document).ready(function() {
     var table =  $('#users-table').DataTable( {
-        autoWidth: false,
+        autoWidth: true,
+        responsive: true,
         ajax: 
         {
             url: "DashboardController",
