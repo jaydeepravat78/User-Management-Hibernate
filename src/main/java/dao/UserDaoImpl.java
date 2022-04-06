@@ -1,6 +1,8 @@
 package dao;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,6 +13,8 @@ import java.util.Base64;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+
+import com.mysql.cj.util.Base64Decoder;
 
 import models.Address;
 import models.User;
@@ -30,20 +34,19 @@ public class UserDaoImpl implements UserDao {
 	private static final String DELETE_USER = "delete from users where id = ?";
 	private static final String UPDATE_USER = "update users set name = ?, password = ?, phone = ?, gender = ?, lang = ?,  photo = ?, secQuestion = ?, game = ? where id = ?";
 	private static final String GET_USER = "select * from users where id = ?";
-	private static final String ADD_USERS = "insert into users (name, email, password, phone, gender, lang, isAdmin, game, secQuestion) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private static final String UPDATE_ADDRESS = "update addresses set street = ?, city = ?, state = ? where address_id = ?";
 	private static final String DElETE_ADDRESS = "delete from addresses where address_id = ?";
 
 	/**
 	 * 
 	 * <p>
-	 * The following method check if user is autorized or not if so it return all
+	 * The following method check if user is authorized or not if so it return all
 	 * the data from database
 	 * </p>
 	 * 
 	 * @param email, password email and password that user enters
 	 * @return User {@link User}
-	 * @throws SQLException if there is error in sql
+	 * @throws SQLException if there is error in SQL
 	 * 
 	 * 
 	 */
@@ -73,13 +76,12 @@ public class UserDaoImpl implements UserDao {
 					user.setSecQues(rs.getString("secQuestion"));
 					user.setAdmin(rs.getBoolean("isAdmin"));
 					List<Address> addresses = new ArrayList<>();
-					user.setPhoto(rs.getBinaryStream("photo"));
-					if (user.getPhoto() != null) {
+					InputStream profilePic =  rs.getBinaryStream("photo");
+					if(profilePic != null) {
 						byte[] imageBytes;
 						try {
-							imageBytes = user.getPhoto().readAllBytes();
-							String base64Image = Base64.getEncoder().encodeToString(imageBytes);
-							user.setBase64Photo(base64Image);
+							imageBytes = profilePic.readAllBytes();
+							user.setProfilePic(Base64.getEncoder().encodeToString(imageBytes));
 						} catch (IOException e) {
 							log.error(e);
 						}
@@ -141,8 +143,9 @@ public class UserDaoImpl implements UserDao {
 			stmt1.setString(6, language);
 			stmt1.setInt(7, 0);
 			stmt1.setString(8, user.getGame());
-
-			stmt1.setBlob(9, user.getPhoto());
+			
+			InputStream profilePic = new ByteArrayInputStream(Base64.getDecoder().decode(user.getProfilePic().getBytes()));
+			stmt1.setBlob(9, profilePic);
 			stmt1.setString(10, user.getSecQues());
 			int i = stmt1.executeUpdate();
 			if (i == 1) {
@@ -385,18 +388,17 @@ public class UserDaoImpl implements UserDao {
 				user.setGame(rs.getString("game"));
 				user.setSecQues(rs.getString("secQuestion"));
 				user.setAdmin(rs.getBoolean("isAdmin"));
-				List<Address> addresses = new ArrayList<>();
-				user.setPhoto(rs.getBinaryStream("photo"));
-				if (user.getPhoto() != null) {
+				InputStream profilePic =  rs.getBinaryStream("photo");
+				if(profilePic != null) {
 					byte[] imageBytes;
 					try {
-						imageBytes = user.getPhoto().readAllBytes();
-						String base64Image = Base64.getEncoder().encodeToString(imageBytes);
-						user.setBase64Photo(base64Image);
+						imageBytes = profilePic.readAllBytes();
+						user.setProfilePic(Base64.getEncoder().encodeToString(imageBytes));
 					} catch (IOException e) {
-						e.printStackTrace();
+						log.error(e);
 					}
 				}
+				List<Address> addresses = new ArrayList<>();
 				stmt2 = con.prepareStatement(GET_ALL_USER_ADDRESS);
 				stmt2.setInt(1, user.getId());
 				ResultSet rs2 = stmt2.executeQuery();
@@ -450,7 +452,8 @@ public class UserDaoImpl implements UserDao {
 				language += lang[i] + " ";
 			}
 			stmt.setString(5, language);
-			stmt.setBlob(6, user.getPhoto());
+			InputStream profilePic = new ByteArrayInputStream(Base64.getDecoder().decode(user.getProfilePic().getBytes()));
+			stmt.setBlob(6, profilePic);
 			stmt.setString(7, user.getSecQues());
 			stmt.setString(8, user.getGame());
 			stmt.setInt(9, user.getId());

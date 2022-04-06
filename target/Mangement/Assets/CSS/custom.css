@@ -3,6 +3,7 @@ html, body {
 	margin: 0;
 	font-family: 'Poppins', sans-serif;
 }
+
 form {
 	width: 70%;
 	display: block;
@@ -11,6 +12,12 @@ form {
 	padding: 20px;
 	border-radius: 20px;
 }
-h1 {
+
+h2 {
 	text-transform: uppercase;
 }
+
+.error {
+	color: red;
+}
+

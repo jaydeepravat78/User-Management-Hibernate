@@ -8,8 +8,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 import models.User;
 import services.UserServiceImpl;
+import utility.Validation;
 import services.UserService;
 
 /**
@@ -17,7 +20,7 @@ import services.UserService;
  */
 public class ForgotController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	private static final Logger log = Logger.getLogger(ForgotController.class.getClass());
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -27,12 +30,27 @@ public class ForgotController extends HttpServlet {
 		user.setSecQues(request.getParameter("secQues"));
 		user.setGame(request.getParameter("games"));
 		user.setPassword(request.getParameter("user_password"));
+		String psw = request.getParameter("confirm_psw");
+		System.out.println(user.getPassword() + " " + psw);
+		String error = "";
+		error += Validation.checkSecQues(user.getSecQues());
+		error += Validation.checkGame(user.getGame());
+		error += Validation.checkPassword(user.getPassword());
+		error += Validation.confirmPassword(user.getPassword(), psw);
+		if(error.isEmpty()) {
 		UserService service = new UserServiceImpl();
-		if(service.forgotPsw(user)) {
-			response.sendRedirect("index.jsp");
+			if(service.forgotPsw(user)) {
+				log.info(user.getEmail() +  " Changed password");
+				response.sendRedirect("index.jsp");
+			}
+			else {
+				request.setAttribute("errorMessage", "Unable to change password! Please check your input!!");
+	            RequestDispatcher rd = request.getRequestDispatcher("forgot.jsp");
+	            rd.forward(request, response);
+			}
 		}
 		else {
-			request.setAttribute("errorMessage", "*Something went wrong unable to change password");
+			request.setAttribute("errorMessage", error);
             RequestDispatcher rd = request.getRequestDispatcher("forgot.jsp");
             rd.forward(request, response); 
 		}

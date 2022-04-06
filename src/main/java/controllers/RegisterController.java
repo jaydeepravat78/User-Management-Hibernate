@@ -64,8 +64,9 @@ public class RegisterController extends HttpServlet {
 		user.setSecQues(request.getParameter("secQues").trim());
 		Part filePart = request.getPart("user_photo"); 
 		InputStream userPic = filePart.getInputStream();
-		
-		user.setPhoto(userPic);
+		byte[] imageBytes;
+		imageBytes= userPic.readAllBytes();
+		user.setProfilePic(Base64.getEncoder().encodeToString(imageBytes));
 		List<Address> addresses = new ArrayList<>();
 		String[] street = request.getParameterValues("user_street");
 		String[] city = request.getParameterValues("user_city");
@@ -80,7 +81,7 @@ public class RegisterController extends HttpServlet {
 		user.setAddresses(addresses);
 		UserService service = new UserServiceImpl();
 		if(service.signUp(user)) {
-			log.info("User signup successfully");
+			log.info(user.getName() +  " User signup successfully");
 			response.sendRedirect(redirect);
 		}
 		else {

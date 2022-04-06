@@ -10,13 +10,13 @@ $('#add-more').cloneData({
 
 jQuery.validator.addMethod("name_regex", function(value, element) {
 	return this.optional(element) || /^[a-zA-Z ]+$/i.test(value);
-}, "Name with only a-z A-Z."); // check if a valid name
+}, "*Name with only a-z A-Z."); // check if a valid name
 jQuery.validator.addMethod("phone_regex", function(value, element) {
-	return this.optional(element) || /^[0-9\.\-_]{10}$/i.test(value);
-}, "Phone Number with only 0-9. length: 10"); // phone number check
+	return this.optional(element) || /^[7-9][0-9]{9}$/i.test(value);
+}, "*Phone Number with only 0-9 and should start with 7-9. length: 10"); // phone number check
 jQuery.validator.addMethod("password_regex", function(value, element) {
-	return this.optional(element) || /^[a-z0-9!@#$%^&*()_\.\-_]{8,30}$/i.test(value);
-}, "Password of atleast 8 characters."); // password check
+	return this.optional(element) || /^[a-z0-9!@#$%^&*()_\\.\\-_]{8,30}$/i.test(value);
+}, "*Password should have minimum 8 and maximum 30 character"); // password check
 
 
 $("#reg_form").validate({
@@ -64,9 +64,6 @@ $("#reg_form").validate({
 		'user_state' : {
 			required: true,
 		},
-		'user_photo': {
-			required: true,
-		}
 	},
 	messages: {
 		'user_name': {
@@ -104,9 +101,6 @@ $("#reg_form").validate({
 		},
 		'user_state' : {
 			required: "*Please enter your State",
-		},
-		'user_photo': {
-			required: "*Please enter a photo",
 		}
 	},
 	errorPlacement: function(error, element) {

@@ -1,7 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1" isELIgnored="false" session="true"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
+<%
+response.setHeader("Cache-Control", "no-cache"); //Forces caches to obtain a new copy of the page from the origin server
+response.setHeader("Cache-Control", "no-store"); //Directs caches not to store the page under any circumstance
+response.setDateHeader("Expires", 0); //Causes the proxy cache to see the page as "stale"
+response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
+%>
 <!DOCTYPE html>
 <html>
 <link>
@@ -36,14 +41,14 @@
 					<input type="text" name="user_name" class="form-control"
 						id="inputName"
 						value='<c:out value="${requestScope.userData.getName()}" />'
-						placeholder="Raj">
+						placeholder="Raj" maxlength="45">
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="inputEmail" class="col-sm-2 control-label">Email</label>
 				<div class="col-sm-10">
 					<input type="text" name="user_email" class="form-control"
-						id="inputEmail"
+						id="inputEmail" maxlength="45"
 						value='<c:out value="${requestScope.userData.getEmail()}" />'
 						placeholder="raj@gmail.com"
 						<c:if test="${requestScope.userData != null }">disabled</c:if>>
@@ -75,7 +80,7 @@
 					<input type="text" class="form-control" name="user_phone"
 						id="inputPhone"
 						value='<c:out value="${requestScope.userData.getPhone()}" />'
-						placeholder="1234567890">
+						placeholder="[7-9]123456789">
 				</div>
 			</div>
 			<div class="form-group">
@@ -135,7 +140,7 @@
 				<div class="col-sm-10">
 					<input type="text" class="form-control" name="secQues" id="secQues"
 						placeholder="What is the name of your first school?"
-						value="${requestScope.userData.getSecQues()}">
+						maxlength="45" value="${requestScope.userData.getSecQues()}">
 				</div>
 			</div>
 			<div id="main-container">
@@ -146,23 +151,28 @@
 							<div class="form-group">
 								<label for="inputAddress" class="col-sm-2 control-label">Address</label>
 								<div class="col-sm-10">
-									<div class="col-sm-4">
-										<input type="text" name="user_street" class="form-control"
-											placeholder="Street" value="${address.getStreet()}">
-									</div>
-									<div class="col-sm-3">
-										<input type="text" name="user_city" class="form-control"
-											placeholder="City" value="${address.getCity()}">
-									</div>
-									<div class="col-sm-3">
-										<input type="text" name="user_state" class="form-control"
-											placeholder="State" value="${address.getState()}">
-									</div>
-									<input type="text" name="address_id"
-										value="${address.getAddress_id()}" hidden="hidden">
-									<div class="col-sm-2">
-										<a href="javascript:void(0)"
-											class="remove-item btn btn-sm btn-danger">Delete</a>
+									<div class="row">
+										<div class="col-sm-4 mb-10">
+											<input type="text" name="user_street" class="form-control"
+												placeholder="Street" value="${address.getStreet()}"
+												maxlength="45">
+										</div>
+										<div class="col-sm-3 mb-10">
+											<input type="text" name="user_city" class="form-control"
+												placeholder="City" value="${address.getCity()}"
+												maxlength="45">
+										</div>
+										<div class="col-sm-3 mb-10">
+											<input type="text" name="user_state" class="form-control"
+												placeholder="State" value="${address.getState()}"
+												maxlength="45">
+										</div>
+										<input type="text" name="address_id"
+											value="${address.getAddress_id()}" hidden="hidden">
+										<div class="col-sm-2 mb-10">
+											<a href="javascript:void(0)"
+												class="remove-item btn btn-danger">Delete</a>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -175,45 +185,48 @@
 						<div class="form-group">
 							<label for="inputAddress" class="col-sm-2 control-label">Address</label>
 							<div class="col-sm-10">
-								<div class="col-sm-4">
-									<input type="text" name="user_street" class="form-control"
-										placeholder="Street">
-								</div>
-								<div class="col-sm-3">
-									<input type="text" name="user_city" class="form-control"
-										placeholder="City">
-								</div>
-								<div class="col-sm-3">
-									<input type="text" name="user_state" class="form-control"
-										placeholder="State">
-								</div>
-								<div class="col-sm-2">
-									<a href="javascript:void(0)"
-										class="remove-item btn btn-sm btn-danger">Delete</a>
+								<div class="row">
+									<div class="col-sm-4 mb-10">
+										<input type="text" name="user_street" class="form-control"
+											placeholder="Street" maxlength="45">
+									</div>
+									<div class="col-sm-3 mb-10">
+										<input type="text" name="user_city" class="form-control"
+											placeholder="City" maxlength="45">
+									</div>
+									<div class="col-sm-3 mb-10">
+										<input type="text" name="user_state" class="form-control"
+											placeholder="State" maxlength="45">
+									</div>
+									<div class="col-sm-2 mb-10">
+										<a href="javascript:void(0)"
+											class="remove-item btn btn-danger">Delete</a>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</c:if>
 			</div>
-			<div class="col-sm-offset-2 col-sm-10">
-				<a id="add-more" href="javascript:;"
-					class="btn btn-sm btn-warning addbtn">Add</a>
+			<div class="row">
+				<div class="col-sm-offset-2 col-sm-10">
+					<a id="add-more" href="javascript:;"
+						class="btn btn-sm btn-warning addbtn">Add</a>
+				</div>
 			</div>
 			<div class="form-group">
 				<label for="inputPhoto" class="col-sm-2 control-label">Photo</label>
 				<div class="col-sm-5">
 					<input type="file" name="user_photo" class="btn"
-						accept="image/png, image/gif, image/jpeg"
-						value="data:image/jpg;base64,${requestScope.userData.getBase64Photo()}">
+						accept="image/png, image/gif, image/jpeg">
 				</div>
 				<c:if test="${requestScope.userData != null}">
 					<div class="col-sm-5">
 
-						<c:if test="${not empty sessionScope.user.getBase64Photo()}">
+						<c:if test="${not empty requestScope.userData.getProfilePic()}">
 							<img class="img-circle img-thumbnail img-responsive profile"
 								alt="profilePic"
-								src="data:image/jpg;base64,${requestScope.userData.getBase64Photo()}">
+								src="data:image/jpg;base64,${requestScope.userData.getProfilePic()}">
 						</c:if>
 					</div>
 				</c:if>

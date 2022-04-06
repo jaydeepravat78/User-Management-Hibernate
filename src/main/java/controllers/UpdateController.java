@@ -3,6 +3,7 @@ package controllers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -13,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
+
+import org.apache.log4j.Logger;
 
 import models.Address;
 import models.User;
@@ -26,17 +29,27 @@ import services.UserServiceImpl;
 @MultipartConfig
 public class UpdateController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final Logger log = Logger.getLogger(UpdateController.class.getClass());
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		int id = Integer.parseInt(request.getParameter("id"));
-		UserService service = new UserServiceImpl();
-		User user = service.getUser(id);
-		request.setAttribute("userData", user);
-		RequestDispatcher rd = request.getRequestDispatcher("registration.jsp");
-		rd.forward(request, response);
+		HttpSession session = request.getSession(false);
+
+		if (session != null && (session.getAttribute("user") != null || session.getAttribute("admin") != null)) {
+			int id = Integer.parseInt(request.getParameter("id"));
+			UserService service = new UserServiceImpl();
+			User user = service.getUser(id);
+			if (user != null) {
+				request.setAttribute("userData", user);
+				RequestDispatcher rd = request.getRequestDispatcher("registration.jsp");
+				rd.forward(request, response);
+			} else {
+				response.sendRedirect("index.jsp");
+			}
+		} else {
+			response.sendRedirect("index.jsp");
+		}
 	}
 
 	/**
@@ -58,11 +71,12 @@ public class UpdateController extends HttpServlet {
 		newUserData.setSecQues(request.getParameter("secQues").trim());
 		Part filePart = request.getPart("user_photo");
 		if (filePart.getSize() > 0) {
-			InputStream userPic = filePart.getInputStream();	
-			newUserData.setPhoto(userPic);
-		}
-		else {
-			newUserData.setPhoto(service.getUser(newUserData.getId()).getPhoto());
+			InputStream newUserPic = filePart.getInputStream();
+			byte[] imageBytes;
+			imageBytes = newUserPic.readAllBytes();
+			newUserData.setProfilePic(Base64.getEncoder().encodeToString(imageBytes));
+		} else {
+			newUserData.setProfilePic(service.getUser(newUserData.getId()).getProfilePic());
 		}
 		List<Address> newAddresses = new ArrayList<>();
 		String[] street = request.getParameterValues("user_street");
@@ -75,13 +89,14 @@ public class UpdateController extends HttpServlet {
 			address.setCity(city[i]);
 			address.setState(state[i]);
 			int addressId = 0;
-			if (!address_id[i].equals(""))
+			if (address_id != null && !address_id[i].equals(""))
 				addressId = Integer.parseInt(address_id[i]);
 			address.setAddress_id(addressId);
 			newAddresses.add(address);
 		}
 		if (service.updateUser(newUserData)) {
 			service.updateNewAddress(newAddresses, newUserData.getId());
+			log.info(newUserData.getId() + " user details updated");
 			if (session != null && session.getAttribute("admin") != null) {
 				response.sendRedirect("dashboard.jsp");
 			} else if (session != null & session.getAttribute("user") != null) {

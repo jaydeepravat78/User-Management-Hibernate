@@ -84,7 +84,6 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public boolean updateNewAddress(List<Address> newAddresses, int userId) {
-		// TODO Auto-generated method stub
 		List<Address> oldAddresses = getUser(userId).getAddresses();
 		for(Address oldAddress: oldAddresses) {
 			Address newAddress = (Address) newAddresses.stream().filter(address -> address.getAddress_id() == oldAddress.getAddress_id()).findAny().orElse(null);

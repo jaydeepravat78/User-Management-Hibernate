@@ -4,6 +4,16 @@
 
 <web-app>
 	<display-name>Archetype Created Web Application</display-name>
+	<filter>
+		<filter-name>ValidationFilter</filter-name>
+		<display-name>ValidationFilter</display-name>
+		<description></description>
+		<filter-class>controllers.ValidationFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>ValidationFilter</filter-name>
+		<url-pattern>/RegisterController</url-pattern>
+	</filter-mapping>
 	<servlet>
 		<servlet-name>RegisterController</servlet-name>
 		<display-name>RegisterController</display-name>
@@ -40,6 +50,24 @@
 		<description></description>
 		<servlet-class>controllers.EmailCheckController</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>LogoutController</servlet-name>
+		<display-name>LogoutController</display-name>
+		<description></description>
+		<servlet-class>controllers.LogoutController</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>UpdateController</servlet-name>
+		<display-name>UpdateController</display-name>
+		<description></description>
+		<servlet-class>controllers.UpdateController</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>UsersController</servlet-name>
+		<display-name>UsersController</display-name>
+		<description></description>
+		<servlet-class>controllers.UsersController</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>RegisterController</servlet-name>
 		<url-pattern>/RegisterController</url-pattern>
@@ -63,5 +91,17 @@
 	<servlet-mapping>
 		<servlet-name>EmailCheckController</servlet-name>
 		<url-pattern>/EmailCheckController</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>LogoutController</servlet-name>
+		<url-pattern>/LogoutController</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UpdateController</servlet-name>
+		<url-pattern>/UpdateController</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UsersController</servlet-name>
+		<url-pattern>/UsersController</url-pattern>
 	</servlet-mapping>
 </web-app>

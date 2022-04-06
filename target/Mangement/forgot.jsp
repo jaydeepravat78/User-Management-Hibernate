@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
+	pageEncoding="ISO-8859-1" isELIgnored="false" session="true"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,9 +15,16 @@
 <link rel="stylesheet" href="Assets/CSS/forgot.css"></link>
 </head>
 <body>
+	<jsp:include page="header.jsp"></jsp:include>
 	<div class="container">
-		<h1 class="text-center">Forgot Password</h1>
-		<form class="form-horizontal" action="ForgotController" method="post" id="forgot-form">
+		<div class="error text-center">
+			<c:if test="${not empty errorMessage}">
+				<c:out value="${errorMessage}" />
+			</c:if>
+		</div>
+		<form class="form-horizontal" action="ForgotController" method="post"
+			id="forgot-form">
+			<h2 class="text-center">Forgot Password</h2>
 			<div class="form-group">
 				<label for="inputEmail" class="col-sm-2 control-label">Email</label>
 				<div class="col-sm-10">
@@ -72,6 +81,7 @@
 			</div>
 		</form>
 	</div>
+	<jsp:include page="footer.html"></jsp:include>
 	<script src="Assets/JS/jquery-3.6.0.min.js"></script>
 	<!-- jquery -->
 	<script src="Assets/Libraries/bootstrap/js/bootstrap.min.js"></script>

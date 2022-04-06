@@ -32,7 +32,7 @@ public class ValidationFilter implements Filter {
 		String email = request.getParameter("user_email");
 		String phone = request.getParameter("user_phone");
 		String password = request.getParameter("user_password");
-		String confimPsw = request.getParameter("");
+		String confimPsw = request.getParameter("confirm_psw");
 		String gender = request.getParameter("gender");
 		String[] lang = request.getParameterValues("lang");
 		String game = request.getParameter("games");

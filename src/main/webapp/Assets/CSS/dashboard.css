@@ -18,6 +18,12 @@ html, body {
 #users-table tbody tr:hover {
 	background-color: #f6f6f6;
 }
+form {
+	margin: 20px 0px;
+}
 .error {
 	color: red;
+}
+.container {
+	overflow-x: auto; 
 }

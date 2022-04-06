@@ -1,9 +1,10 @@
 $(document).ready(function() {
     var table =  $('#users-table').DataTable( {
-        autoWidth: true,
-        responsive: true,
+        autoWidth: false,
+        "responsive": true,
         ajax: 
         {
+        	type: "post",
             url: "DashboardController",
             dataType: "JSON",
             error: function(xhr, error, code) {
@@ -59,7 +60,7 @@ $(document).ready(function() {
 function deleteUser(obj) {
     var id = $(obj).attr('id');
 	$.ajax({
-        type: "get",
+        type: "post",
         url: "DeleteController",
         data: {
         	"id": id

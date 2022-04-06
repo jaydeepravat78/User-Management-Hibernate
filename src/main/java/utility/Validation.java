@@ -8,7 +8,7 @@ import services.UserService;
 public class Validation {
 
 	public static String checkName(String name) {
-		if (name.isEmpty())
+		if (name == null || name.isEmpty())
 			return "*Name field cannot be empty\n";
 		else if (!Pattern.matches("^[a-zA-Z]+$", name))
 			return "*Name should only contains alphabet\n";
@@ -18,7 +18,7 @@ public class Validation {
 
 	public static String checkEmail(String email) {
 		UserService service = new UserServiceImpl();
-		if (email.isEmpty())
+		if (email == null || email.isEmpty())
 			return "*Email should not be empty\n";
 		else if (!Pattern.matches("^(.+)@(.+)$", email))
 			return "*Please enter a valid email\n";
@@ -29,7 +29,7 @@ public class Validation {
 	}
 
 	public static String checkPhone(String phone) {
-		if (phone.isEmpty())
+		if (phone == null || phone.isEmpty())
 			return "*Phone should not be empty";
 		else if (!Pattern.matches("[7-9][0-9]{9}", phone))
 			return "*Please enter a valid phone number\n";
@@ -52,30 +52,30 @@ public class Validation {
 	}
 
 	public static String checkGame(String game) {
-		if (game.isEmpty())
+		if (game == null || game.isEmpty())
 			return "*Please select a game\n";
 		else
 			return "";
 	}
 
 	public static String checkSecQues(String secQues) {
-		if (secQues.isEmpty())
+		if (secQues == null || secQues.isEmpty())
 			return "*Please answer the Security question\n";
 		else
 			return "";
 	}
 
 	public static String checkPassword(String Password) {
-		if (Password.isEmpty())
+		if (Password == null || Password.isEmpty())
 			return "*Please enter a password";
 		else if (Pattern.matches("^[a-z0-9!@#$%^&*()_\\.\\-_]{8,30}$", Password))
-			return "*Password should have minimum 8 character\n";
+			return "*Password should have minimum 8 and maximum 30 character with a number, upper character, lower character and a special character\n";
 		else
 			return "";
 	}
 
 	public static String confirmPassword(String password, String confirmPassword) {
-		if (password.equals(confirmPassword))
+		if (!password.equals(confirmPassword))
 			return "*Password doesn't match\n";
 		else
 			return "";

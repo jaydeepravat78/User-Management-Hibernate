@@ -44,14 +44,6 @@ $("#forgot-form").validate({
 			required: "*Please answer this question",
 		}
 	},
-	errorPlacement: function(error, element) {
-		if (element.is(":radio") || element.is(":checkbox")) {
-			error.appendTo(element.parents('.form-group'));
-		}
-		else {
-			error.insertAfter(element);
-		}
-	},
 	submitHandler: function(form) {
 		form.submit();
 	}

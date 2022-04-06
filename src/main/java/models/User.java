@@ -1,6 +1,5 @@
 package models;
 
-import java.io.InputStream;
 import java.util.List;
 
 public class User {
@@ -13,18 +12,9 @@ public class User {
 	private String game;
 	private String[] lang;
 	private String secQues;
-	private InputStream photo;
-	private String base64Photo;
+	private String profilePic;
 	private List<Address> addresses;
 	private boolean isAdmin;
-
-	public String getBase64Photo() {
-		return base64Photo;
-	}
-
-	public void setBase64Photo(String base64Photo) {
-		this.base64Photo = base64Photo;
-	}
 
 	public boolean isAdmin() {
 		return isAdmin;
@@ -36,14 +26,6 @@ public class User {
 
 	public String getSecQues() {
 		return secQues;
-	}
-
-	public InputStream getPhoto() {
-		return photo;
-	}
-
-	public void setPhoto(InputStream photo) {
-		this.photo = photo;
 	}
 
 	public void setSecQues(String secQues) {
@@ -120,6 +102,14 @@ public class User {
 
 	public void setLang(String[] lang) {
 		this.lang = lang;
+	}
+
+	public String getProfilePic() {
+		return profilePic;
+	}
+
+	public void setProfilePic(String profilePic) {
+		this.profilePic = profilePic;
 	}
 
 }

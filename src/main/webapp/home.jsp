@@ -37,10 +37,10 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 				<c:out value="${sessionScope.user.getName()}" />
 			</h2>
 			<div class="text-center">
-				<c:if test="${sessionScope.user.getPhoto() != null}">
+				<c:if test="${not empty sessionScope.user.getProfilePic()}">
 					<img class="img-circle img-thumbnail img-responsive profile"
 						alt="profilePic"
-						src="data:image/jpg;base64,${sessionScope.user.getBase64Photo()}">
+						src="data:image/jpg;base64,${sessionScope.user.getProfilePic()}">
 				</c:if>
 				<h4>
 					Email:
