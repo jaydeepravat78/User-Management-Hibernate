@@ -17,6 +17,12 @@
 
 </head>
 <body>
+	<c:if test="${sessionScope.user != null}">
+		<c:redirect url="home.jsp" />
+	</c:if>
+	<c:if test="${sessionScope.admin != null}">
+		<c:redirect url="dashboard.jsp"></c:redirect>
+	</c:if>
 	<jsp:include page="header.jsp"></jsp:include>
 	<div class="container">
 

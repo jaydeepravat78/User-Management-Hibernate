@@ -142,9 +142,11 @@ public class UserDaoImpl implements UserDao {
 			stmt1.setString(6, language);
 			stmt1.setInt(7, 0);
 			stmt1.setString(8, user.getGame());
-
-			InputStream profilePic = new ByteArrayInputStream(
+			InputStream profilePic = null;
+			if(user.getProfilePic() != null) {
+			profilePic = new ByteArrayInputStream(
 					Base64.getDecoder().decode(user.getProfilePic().getBytes()));
+			}
 			stmt1.setBlob(9, profilePic);
 			stmt1.setString(10, user.getSecQues());
 			int i = stmt1.executeUpdate();

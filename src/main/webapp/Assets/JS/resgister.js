@@ -15,8 +15,8 @@ jQuery.validator.addMethod("phone_regex", function(value, element) {
 	return this.optional(element) || /^[7-9][0-9]{9}$/i.test(value);
 }, "*Phone Number with only 0-9 and should start with 7-9. length: 10"); // phone number check
 jQuery.validator.addMethod("password_regex", function(value, element) {
-	return this.optional(element) || /^[a-z0-9!@#$%^&*()_\\.\\-_]{8,30}$/i.test(value);
-}, "*Password should have minimum 8 and maximum 30 character"); // password check
+	return this.optional(element) || /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,30}$/i.test(value);
+}, "*Password should have minimum 8 and maximum 30 character (1 [a-z A-Z 0-9 special character])"); // password check 
 
 
 $("#reg_form").validate({
@@ -101,7 +101,7 @@ $("#reg_form").validate({
 		},
 		'user_state' : {
 			required: "*Please enter your State",
-		}
+		},
 	},
 	errorPlacement: function(error, element) {
 		if (element.is(":radio") || element.is(":checkbox")) {

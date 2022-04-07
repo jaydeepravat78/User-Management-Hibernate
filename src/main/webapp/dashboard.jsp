@@ -52,19 +52,18 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 				<tbody>
 				</tbody>
 			</table>
-			<form class="form-inline importform" action="UsersController" method="post"
-				enctype="multipart/form-data">
+			<form class="form-inline importform" action="UsersController"
+				method="post" enctype="multipart/form-data" id="fileUpload">
 				<input type="file"
 					accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 					name="excelFile" class="form-control"> <input type="submit"
-					value="Import Users" class="btn btn-success">
-				<span class="error text-center">
-					<c:if test="${not empty errorMessage}">
+					value="Import Users" class="btn btn-success"> <span
+					class="error text-center"> <c:if
+						test="${not empty errorMessage}">
 						<c:out value="${errorMessage}" />
 					</c:if>
 				</span>
 			</form>
-
 		</div>
 	</c:if>
 	<c:if test="${sessionScope.admin == null}">
@@ -76,6 +75,8 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 	<!--  bootstrap -->
 	<script src="Assets/Libraries/datatable/datatables.min.js"></script>
 	<!-- datatable -->
+	<script src="Assets/Libraries/validate/jquery.validate.min.js"></script>
+	<!-- validate js -->
 	<script src="Assets/JS/dashboard.js"></script>
 </body>
 </html>

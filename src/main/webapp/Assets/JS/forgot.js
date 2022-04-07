@@ -1,7 +1,6 @@
 jQuery.validator.addMethod("password_regex", function(value, element) {
-	return this.optional(element) || /^[a-z0-9!@#$%^&*()_\.\-_]{8,30}$/i.test(value);
-});
-
+	return this.optional(element) || /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,30}$/i.test(value);
+}, "*Password should have minimum 8 and maximum 30 character (1 [a-z A-Z 0-9 special character])"); // password check 
 
 $("#forgot-form").validate({
 	rules: {
@@ -31,7 +30,6 @@ $("#forgot-form").validate({
 		},
 		'user_password': {
 			required: "*Please enter a password",
-			password_regex: "*Password should contain atlease 8 characters",
 		},
 		"confirm_psw": {
 			required: "*Please confirm the password",

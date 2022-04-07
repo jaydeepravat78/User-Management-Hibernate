@@ -131,16 +131,13 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 						<option value="">Select</option>
 						<option value="GTA"
 							<c:if test="${userData.getGame() == 'GTA'}">selected='selected'</c:if>
-							<c:if test="${userError.getGame() == 'GTA'}">selected='selected'</c:if>
-							>GTA</option>
+							<c:if test="${userError.getGame() == 'GTA'}">selected='selected'</c:if>>GTA</option>
 						<option value="Fifa"
 							<c:if test="${userData.getGame() == 'Fifa'}">selected='selected'</c:if>
-							<c:if test="${userError.getGame() == 'Fifa'}">selected='selected'</c:if>
-							>Fifa</option>
+							<c:if test="${userError.getGame() == 'Fifa'}">selected='selected'</c:if>>Fifa</option>
 						<option value="Battlefield"
 							<c:if test="${userData.getGame() == 'Battlefield'}">selected='selected'</c:if>
-							<c:if test="${userError.getGame() == 'Battlefield'}">selected='selected'</c:if>
-							>Battlefield</option>
+							<c:if test="${userError.getGame() == 'Battlefield'}">selected='selected'</c:if>>Battlefield</option>
 					</select>
 				</div>
 			</div>
@@ -158,7 +155,7 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 				</div>
 			</div>
 			<div id="main-container">
-				<c:if test="${userData != null}">
+				<c:if test="${userData != null }">
 					<c:forEach var="address" items="${userData.getAddresses()}">
 						<div class="container-item">
 							<div class="form-group">
@@ -192,8 +189,41 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 						</div>
 					</c:forEach>
 				</c:if>
-				<c:if
-					test="${userData == null || userData.getAddresses().size() == 0}">
+				<c:if test="${userError != null }">
+					<c:forEach var="address" items="${userError.getAddresses()}">
+						<div class="container-item">
+							<div class="form-group">
+								<label for="inputAddress" class="col-sm-2 control-label">Address</label>
+								<div class="col-sm-10">
+									<div class="row">
+										<div class="col-sm-4 mb-10">
+											<input type="text" name="user_street" class="form-control"
+												placeholder="Street" value="${address.getStreet()}"
+												maxlength="45">
+										</div>
+										<div class="col-sm-3 mb-10">
+											<input type="text" name="user_city" class="form-control"
+												placeholder="City" value="${address.getCity()}"
+												maxlength="45">
+										</div>
+										<div class="col-sm-3 mb-10">
+											<input type="text" name="user_state" class="form-control"
+												placeholder="State" value="${address.getState()}"
+												maxlength="45">
+										</div>
+										<input type="text" name="address_id"
+											value="${address.getAddress_id()}" hidden="hidden">
+										<div class="col-sm-2 mb-10">
+											<a href="javascript:void(0)"
+												class="remove-item btn btn-danger">Delete</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</c:forEach>
+				</c:if>
+				<c:if test="${(userError == null && userData == null) || userData.getAddresses().size() == 0 }">
 					<div class="container-item">
 						<div class="form-group">
 							<label for="inputAddress" class="col-sm-2 control-label">Address</label>
