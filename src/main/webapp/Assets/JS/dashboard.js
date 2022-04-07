@@ -42,9 +42,9 @@ $(document).ready(function() {
 			    "targets": 6,
 			    className: 'dt-body-center',
 			    "render": function ( data, type, row, meta ) {
-			      return '<a class="btn btn-sm btn-warning" href="UpdateController?id=' + row.id+'">Edit</a>';
+			      return '<form action="UserDataController" method="post"><input type="text" name="id" value="' + row.id+'" hidden><input type="submit" class="btn btn-sm btn-warning" value="Edit"> </form>';
 			    }
-		  	}, 
+			}, 
         	{
 			    "targets": 7,
 			    className: 'dt-body-center',
@@ -56,7 +56,6 @@ $(document).ready(function() {
     });
 });
 
-
 function deleteUser(obj) {
     var id = $(obj).attr('id');
 	$.ajax({
@@ -67,7 +66,6 @@ function deleteUser(obj) {
         },
         success: function () {
             $('#users-table').DataTable().ajax.reload();
-            alert("User deleted successfully");
         },
         error: function(xhr, error) {
             console.log(xhr.status + " " + error);

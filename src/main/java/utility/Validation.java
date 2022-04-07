@@ -84,21 +84,21 @@ public class Validation {
 	public static String checkStreet(String[] street) {
 		for (int i = 0; i < street.length; i++)
 			if (street[i].isEmpty())
-				return "*Please enter a street\n";
+				return "*Please enter all street\n";
 		return "";
 	}
 
 	public static String checkCity(String[] city) {
 		for (int i = 0; i < city.length; i++)
 			if (city[i].isEmpty())
-				return "*Please enter a city\n";
+				return "*Please enter all city\n";
 		return "";
 	}
 
 	public static String checkState(String[] state) {
 		for (int i = 0; i < state.length; i++)
 			if (state[i].isEmpty())
-				return "*Please enter a state\n";
+				return "*Please enter all state\n";
 		return "";
 	}
 

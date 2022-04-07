@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
 	public String addAllUsers(List<User> users) {
 		String error = "";
 		int count = 1;
-		for(User user: users) {
+		for (User user : users) {
 			String inputError = "";
 			inputError += Validation.checkName(user.getName());
 			inputError += Validation.checkEmail(user.getEmail());
@@ -70,32 +70,31 @@ public class UserServiceImpl implements UserService {
 			inputError += Validation.checkLang(user.getLang());
 			inputError += Validation.checkGame(user.getGame());
 			inputError += Validation.checkSecQues(user.getSecQues());
-			if(inputError.isEmpty()) {
+			if (inputError.isEmpty()) {
 				user.setPassword(KeyGeneration.encrypt(user.getPassword()));
 				dao.addUser(user);
-			}
-			else {
+			} else {
 				error += "At row " + count + " " + inputError;
 			}
 			count++;
 		}
 		return error;
 	}
-	
+
 	@Override
 	public boolean updateNewAddress(List<Address> newAddresses, int userId) {
 		List<Address> oldAddresses = getUser(userId).getAddresses();
-		for(Address oldAddress: oldAddresses) {
-			Address newAddress = (Address) newAddresses.stream().filter(address -> address.getAddress_id() == oldAddress.getAddress_id()).findAny().orElse(null);
-			if(newAddress != null) {
+		for (Address oldAddress : oldAddresses) {
+			Address newAddress = (Address) newAddresses.stream()
+					.filter(address -> address.getAddress_id() == oldAddress.getAddress_id()).findAny().orElse(null);
+			if (newAddress != null) {
 				dao.updateOldAddress(newAddress);
-			}
-			else {
+			} else {
 				dao.deleteOldAddress(oldAddress.getAddress_id());
 			}
 		}
-		for(Address newAddress: newAddresses) {
-			if(newAddress.getAddress_id() == 0) {
+		for (Address newAddress : newAddresses) {
+			if (newAddress.getAddress_id() == 0) {
 				dao.addNewAddress(newAddress, userId);
 			}
 		}

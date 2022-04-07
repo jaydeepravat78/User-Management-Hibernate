@@ -38,21 +38,21 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 				<!-- Table for data -->
 				<thead>
 					<tr>
-						<th>ID</th>
-						<th>Name</th>
-						<th>Email</th>
-						<th>Phone</th>
-						<th>Gender</th>
-						<th>Game</th>
-						<th>Edit</th>
-						<th>Delete</th>
+						<th class="dt-head-center">ID</th>
+						<th class="dt-head-center">Name</th>
+						<th class="dt-head-center">Email</th>
+						<th class="dt-head-center">Phone</th>
+						<th class="dt-head-center">Gender</th>
+						<th class="dt-head-center">Game</th>
+						<th class="dt-head-center">Edit</th>
+						<th class="dt-head-center">Delete</th>
 					</tr>
 					<!-- Headings -->
 				</thead>
 				<tbody>
 				</tbody>
 			</table>
-			<form class="form-inline" action="UsersController" method="post"
+			<form class="form-inline importform" action="UsersController" method="post"
 				enctype="multipart/form-data">
 				<input type="file"
 					accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"

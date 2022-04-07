@@ -32,6 +32,9 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 	<jsp:include page="header.jsp"></jsp:include>
 	<c:if test="${sessionScope.user != null}">
 		<div class="container text-center">
+			<nav class="text-right">
+				<a href="LogoutController" class="btn btn-danger">Logout</a>
+			</nav>
 			<h2 class="text-center">
 				Welcome
 				<c:out value="${sessionScope.user.getName()}" />
@@ -59,10 +62,11 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 					<c:out value="${sessionScope.user.getGame() }"></c:out>
 				</h4>
 			</div>
-			<a href="LogoutController" class="btn btn-danger">Logout</a> <a
-				class="btn btn-primary"
-				href="UpdateController?id=${sessionScope.user.getId()}">Edit
-				Profile</a>
+			<form action="UserDataController" class="text-center" method="post">
+				<input type="text" name="id" value="${sessionScope.user.getId()}"
+					hidden="hidden"> <input type="submit"
+					class="btn btn-primary" value="Edit Profile">
+			</form>
 		</div>
 	</c:if>
 	<c:if test="${sessionScope.user == null}">

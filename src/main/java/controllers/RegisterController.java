@@ -22,6 +22,7 @@ import models.User;
 
 
 import services.UserServiceImpl;
+import utility.ReadBytes;
 import services.UserService;
 
 /**
@@ -64,9 +65,11 @@ public class RegisterController extends HttpServlet {
 		user.setSecQues(request.getParameter("secQues").trim());
 		Part filePart = request.getPart("user_photo"); 
 		InputStream userPic = filePart.getInputStream();
-		byte[] imageBytes;
-		imageBytes= userPic.readAllBytes();
-		user.setProfilePic(Base64.getEncoder().encodeToString(imageBytes));
+		if(userPic != null) {
+			byte[] imageBytes;
+			imageBytes= ReadBytes.readAllBytes(userPic);
+			user.setProfilePic(Base64.getEncoder().encodeToString(imageBytes));
+		}
 		List<Address> addresses = new ArrayList<>();
 		String[] street = request.getParameterValues("user_street");
 		String[] city = request.getParameterValues("user_city");
@@ -81,7 +84,7 @@ public class RegisterController extends HttpServlet {
 		user.setAddresses(addresses);
 		UserService service = new UserServiceImpl();
 		if(service.signUp(user)) {
-			log.info(user.getName() +  " User signup successfully");
+			log.info(user.getEmail() +  " signup successfully");
 			response.sendRedirect(redirect);
 		}
 		else {

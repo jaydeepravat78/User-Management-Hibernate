@@ -19,11 +19,11 @@ public interface UserService {
 	public boolean checkEmail(String email);
 
 	public User getUser(int id);
-	
+
 	public boolean updateUser(User u);
-	
+
 	public String addAllUsers(List<User> users);
-	
+
 	public boolean updateNewAddress(List<Address> address, int id);
-	
+
 }

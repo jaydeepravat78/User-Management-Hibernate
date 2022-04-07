@@ -1,7 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1" isELIgnored="false" session="true"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
+<%
+response.setHeader("Cache-Control", "no-cache"); //Forces caches to obtain a new copy of the page from the origin server
+response.setHeader("Cache-Control", "no-store"); //Directs caches not to store the page under any circumstance
+response.setDateHeader("Expires", 0); //Causes the proxy cache to see the page as "stale"
+response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
+%>
 <!DOCTYPE html>
 <html>
 <link>
@@ -36,16 +41,16 @@
 					<input type="text" name="user_name" class="form-control"
 						id="inputName"
 						value='<c:out value="${requestScope.userData.getName()}" />'
-						placeholder="Raj">
+						placeholder="Sample" maxlength="45">
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="inputEmail" class="col-sm-2 control-label">Email</label>
 				<div class="col-sm-10">
 					<input type="text" name="user_email" class="form-control"
-						id="inputEmail"
+						id="inputEmail" maxlength="45"
 						value='<c:out value="${requestScope.userData.getEmail()}" />'
-						placeholder="raj@gmail.com"
+						placeholder="sample@gmail.com"
 						<c:if test="${requestScope.userData != null }">disabled</c:if>>
 				</div>
 			</div>
@@ -135,7 +140,7 @@
 				<div class="col-sm-10">
 					<input type="text" class="form-control" name="secQues" id="secQues"
 						placeholder="What is the name of your first school?"
-						value="${requestScope.userData.getSecQues()}">
+						maxlength="45" value="${requestScope.userData.getSecQues()}">
 				</div>
 			</div>
 			<div id="main-container">
@@ -149,15 +154,18 @@
 									<div class="row">
 										<div class="col-sm-4 mb-10">
 											<input type="text" name="user_street" class="form-control"
-												placeholder="Street" value="${address.getStreet()}">
+												placeholder="Street" value="${address.getStreet()}"
+												maxlength="45">
 										</div>
 										<div class="col-sm-3 mb-10">
 											<input type="text" name="user_city" class="form-control"
-												placeholder="City" value="${address.getCity()}">
+												placeholder="City" value="${address.getCity()}"
+												maxlength="45">
 										</div>
 										<div class="col-sm-3 mb-10">
 											<input type="text" name="user_state" class="form-control"
-												placeholder="State" value="${address.getState()}">
+												placeholder="State" value="${address.getState()}"
+												maxlength="45">
 										</div>
 										<input type="text" name="address_id"
 											value="${address.getAddress_id()}" hidden="hidden">
@@ -180,15 +188,15 @@
 								<div class="row">
 									<div class="col-sm-4 mb-10">
 										<input type="text" name="user_street" class="form-control"
-											placeholder="Street">
+											placeholder="Street" maxlength="45">
 									</div>
 									<div class="col-sm-3 mb-10">
 										<input type="text" name="user_city" class="form-control"
-											placeholder="City">
+											placeholder="City" maxlength="45">
 									</div>
 									<div class="col-sm-3 mb-10">
 										<input type="text" name="user_state" class="form-control"
-											placeholder="State">
+											placeholder="State" maxlength="45">
 									</div>
 									<div class="col-sm-2 mb-10">
 										<a href="javascript:void(0)"

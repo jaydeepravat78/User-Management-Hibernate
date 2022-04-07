@@ -26,20 +26,20 @@
 			</c:if>
 		</div>
 		<form class="form-horizontal uform" action="LoginController"
-			method="Post">
+			method="Post" id="loginForm">
 			<h2 class="text-center">Login</h2>
 			<div class="form-group">
 				<label for="inputEmail" class="col-sm-2 control-label">Email</label>
 				<div class="col-sm-10">
 					<input type="email" name="user_email" class="form-control"
-						id="inputEmail" placeholder="Email">
+						id="inputEmail" placeholder="abc@gmail.com">
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="inputPassword" class="col-sm-2 control-label">Password</label>
 				<div class="col-sm-10">
 					<input type="password" name="user_password" class="form-control"
-						id="inputPassword" placeholder="Password">
+						id="inputPassword" placeholder="********">
 				</div>
 			</div>
 			<div class="form-group">
@@ -54,8 +54,7 @@
 			</div>
 			<div class="form-group">
 				<div class="col-sm-offset-2 col-sm-10">
-					<button type="submit" class="btn btn-lg btn-success">Log
-						in</button>
+					<input type="submit" class="btn btn-lg btn-success" value="Log in">
 				</div>
 			</div>
 		</form>
@@ -65,5 +64,9 @@
 	<!-- jquery -->
 	<script src="Assets/Libraries/bootstrap/js/bootstrap.min.js"></script>
 	<!--  bootstrap -->
+
+	<script src="Assets/Libraries/validate/jquery.validate.min.js"></script>
+	<!-- validate js -->
+	<script src="Assets/JS/login.js"></script>
 </body>
 </html>

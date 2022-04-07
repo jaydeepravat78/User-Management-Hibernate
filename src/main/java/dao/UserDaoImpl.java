@@ -14,12 +14,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.mysql.cj.util.Base64Decoder;
-
 import models.Address;
 import models.User;
 import utility.KeyGeneration;
 import utility.ManagementConnection;
+import utility.ReadBytes;
 
 public class UserDaoImpl implements UserDao {
 
@@ -76,11 +75,11 @@ public class UserDaoImpl implements UserDao {
 					user.setSecQues(rs.getString("secQuestion"));
 					user.setAdmin(rs.getBoolean("isAdmin"));
 					List<Address> addresses = new ArrayList<>();
-					InputStream profilePic =  rs.getBinaryStream("photo");
-					if(profilePic != null) {
+					InputStream profilePic = rs.getBinaryStream("photo");
+					if (profilePic != null) {
 						byte[] imageBytes;
 						try {
-							imageBytes = profilePic.readAllBytes();
+							imageBytes = ReadBytes.readAllBytes(profilePic);
 							user.setProfilePic(Base64.getEncoder().encodeToString(imageBytes));
 						} catch (IOException e) {
 							log.error(e);
@@ -143,8 +142,9 @@ public class UserDaoImpl implements UserDao {
 			stmt1.setString(6, language);
 			stmt1.setInt(7, 0);
 			stmt1.setString(8, user.getGame());
-			
-			InputStream profilePic = new ByteArrayInputStream(Base64.getDecoder().decode(user.getProfilePic().getBytes()));
+
+			InputStream profilePic = new ByteArrayInputStream(
+					Base64.getDecoder().decode(user.getProfilePic().getBytes()));
 			stmt1.setBlob(9, profilePic);
 			stmt1.setString(10, user.getSecQues());
 			int i = stmt1.executeUpdate();
@@ -388,11 +388,11 @@ public class UserDaoImpl implements UserDao {
 				user.setGame(rs.getString("game"));
 				user.setSecQues(rs.getString("secQuestion"));
 				user.setAdmin(rs.getBoolean("isAdmin"));
-				InputStream profilePic =  rs.getBinaryStream("photo");
-				if(profilePic != null) {
+				InputStream profilePic = rs.getBinaryStream("photo");
+				if (profilePic != null) {
 					byte[] imageBytes;
 					try {
-						imageBytes = profilePic.readAllBytes();
+						imageBytes = ReadBytes.readAllBytes(profilePic);
 						user.setProfilePic(Base64.getEncoder().encodeToString(imageBytes));
 					} catch (IOException e) {
 						log.error(e);
@@ -452,7 +452,8 @@ public class UserDaoImpl implements UserDao {
 				language += lang[i] + " ";
 			}
 			stmt.setString(5, language);
-			InputStream profilePic = new ByteArrayInputStream(Base64.getDecoder().decode(user.getProfilePic().getBytes()));
+			InputStream profilePic = new ByteArrayInputStream(
+					Base64.getDecoder().decode(user.getProfilePic().getBytes()));
 			stmt.setBlob(6, profilePic);
 			stmt.setString(7, user.getSecQues());
 			stmt.setString(8, user.getGame());

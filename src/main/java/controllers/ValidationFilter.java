@@ -1,6 +1,8 @@
 package controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -11,6 +13,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.MultipartConfig;
 
+import models.Address;
+import models.User;
 import utility.Validation;
 
 /**
@@ -28,28 +32,38 @@ public class ValidationFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 
-		String name = request.getParameter("user_name");
-		String email = request.getParameter("user_email");
-		String phone = request.getParameter("user_phone");
-		String password = request.getParameter("user_password");
+		User userData = new User();
+		userData.setName(request.getParameter("user_name"));
+		userData.setEmail(request.getParameter("user_email"));
+		userData.setPhone(request.getParameter("user_phone"));
+		userData.setPassword(request.getParameter("user_password"));
 		String confimPsw = request.getParameter("confirm_psw");
-		String gender = request.getParameter("gender");
-		String[] lang = request.getParameterValues("lang");
-		String game = request.getParameter("games");
-		String secQues = request.getParameter("secQues");
+		userData.setGender(request.getParameter("gender"));
+		userData.setLang(request.getParameterValues("lang"));
+		userData.setGame(request.getParameter("games"));
+		userData.setSecQues(request.getParameter("secQues"));
+		List<Address> addresses = new ArrayList<>();
 		String[] street = request.getParameterValues("user_street");
 		String[] city = request.getParameterValues("user_city");
 		String[] state = request.getParameterValues("user_state");
+		for(int i = 0; i < street.length; i++) {
+			Address address = new Address();
+			address.setStreet(street[i].trim());
+			address.setCity(city[i].trim());
+			address.setState(state[i].trim());
+			addresses.add(address);
+		}
+		userData.setAddresses(addresses);
 		String error = "";
-		error += Validation.checkName(name);
-		error += Validation.checkEmail(email);
-		error += Validation.checkPhone(phone);
-		error += Validation.checkPassword(password);
-		error += Validation.confirmPassword(password, confimPsw);
-		error += Validation.checkGender(gender);
-		error += Validation.checkLang(lang);
-		error += Validation.checkGame(game);
-		error += Validation.checkSecQues(secQues);
+		error += Validation.checkName(userData.getName());
+		error += Validation.checkEmail(userData.getEmail());
+		error += Validation.checkPhone(userData.getPhone());
+		error += Validation.checkPassword(userData.getPassword());
+		error += Validation.confirmPassword(userData.getPassword(), confimPsw);
+		error += Validation.checkGender(userData.getGender());
+		error += Validation.checkLang(userData.getLang());
+		error += Validation.checkGame(userData.getGame());
+		error += Validation.checkSecQues(userData.getSecQues());
 		error += Validation.checkStreet(street);
 		error += Validation.checkCity(city);
 		error += Validation.checkState(state);
@@ -58,6 +72,7 @@ public class ValidationFilter implements Filter {
 		else {
 			RequestDispatcher rd = request.getRequestDispatcher("registration.jsp");
 			request.setAttribute("error", error);
+			request.setAttribute("userError", userData);
 			rd.forward(request, response);
 		}
 	}

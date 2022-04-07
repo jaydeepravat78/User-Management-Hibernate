@@ -21,6 +21,7 @@ import models.Address;
 import models.User;
 import services.UserService;
 import services.UserServiceImpl;
+import utility.ReadBytes;
 
 /**
  * Servlet implementation class UpdateController
@@ -30,28 +31,6 @@ import services.UserServiceImpl;
 public class UpdateController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger log = Logger.getLogger(UpdateController.class.getClass());
-
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		HttpSession session = request.getSession(false);
-
-		if (session != null && (session.getAttribute("user") != null || session.getAttribute("admin") != null)) {
-			int id = Integer.parseInt(request.getParameter("id"));
-			UserService service = new UserServiceImpl();
-			User user = service.getUser(id);
-			if (user != null) {
-				request.setAttribute("userData", user);
-				RequestDispatcher rd = request.getRequestDispatcher("registration.jsp");
-				rd.forward(request, response);
-			} else {
-				response.sendRedirect("index.jsp");
-			}
-		} else {
-			response.sendRedirect("index.jsp");
-		}
-	}
-
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
@@ -72,8 +51,7 @@ public class UpdateController extends HttpServlet {
 		Part filePart = request.getPart("user_photo");
 		if (filePart.getSize() > 0) {
 			InputStream newUserPic = filePart.getInputStream();
-			byte[] imageBytes;
-			imageBytes = newUserPic.readAllBytes();
+			byte[] imageBytes = ReadBytes.readAllBytes(newUserPic);
 			newUserData.setProfilePic(Base64.getEncoder().encodeToString(imageBytes));
 		} else {
 			newUserData.setProfilePic(service.getUser(newUserData.getId()).getProfilePic());

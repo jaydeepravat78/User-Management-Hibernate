@@ -31,8 +31,10 @@ public class ForgotController extends HttpServlet {
 		user.setGame(request.getParameter("games"));
 		user.setPassword(request.getParameter("user_password"));
 		String psw = request.getParameter("confirm_psw");
-		System.out.println(user.getPassword() + " " + psw);
 		String error = "";
+		if(user.getEmail().isEmpty()) {
+			error += "Email cannot be empty";
+		}
 		error += Validation.checkSecQues(user.getSecQues());
 		error += Validation.checkGame(user.getGame());
 		error += Validation.checkPassword(user.getPassword());
