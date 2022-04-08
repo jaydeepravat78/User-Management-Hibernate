@@ -1,6 +1,7 @@
 package controllers;
 
 import java.io.IOException;
+import java.net.http.HttpRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import models.Address;
 import models.User;
@@ -31,10 +34,10 @@ public class ValidationFilter implements Filter {
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-
+		HttpServletRequest req = (HttpServletRequest) request;
+		HttpSession session = req.getSession(false);
 		User userData = new User();
 		userData.setName(request.getParameter("user_name"));
-		userData.setEmail(request.getParameter("user_email"));
 		userData.setPhone(request.getParameter("user_phone"));
 		userData.setPassword(request.getParameter("user_password"));
 		String confimPsw = request.getParameter("confirm_psw");
@@ -46,7 +49,7 @@ public class ValidationFilter implements Filter {
 		String[] street = request.getParameterValues("user_street");
 		String[] city = request.getParameterValues("user_city");
 		String[] state = request.getParameterValues("user_state");
-		for(int i = 0; i < street.length; i++) {
+		for (int i = 0; i < street.length; i++) {
 			Address address = new Address();
 			address.setStreet(street[i].trim());
 			address.setCity(city[i].trim());
@@ -55,8 +58,11 @@ public class ValidationFilter implements Filter {
 		}
 		userData.setAddresses(addresses);
 		String error = "";
+		if (session == null) {
+			userData.setEmail(request.getParameter("user_email"));
+			error += Validation.checkEmail(userData.getEmail());
+		}
 		error += Validation.checkName(userData.getName());
-		error += Validation.checkEmail(userData.getEmail());
 		error += Validation.checkPhone(userData.getPhone());
 		error += Validation.checkPassword(userData.getPassword());
 		error += Validation.confirmPassword(userData.getPassword(), confimPsw);
@@ -70,10 +76,17 @@ public class ValidationFilter implements Filter {
 		if (error.isEmpty())
 			chain.doFilter(request, response);
 		else {
-			RequestDispatcher rd = request.getRequestDispatcher("registration.jsp");
-			request.setAttribute("error", error);
-			request.setAttribute("userError", userData);
-			rd.forward(request, response);
+			if (session == null) {
+				RequestDispatcher rd = request.getRequestDispatcher("registration.jsp");
+				request.setAttribute("error", error);
+				request.setAttribute("userError", userData);
+				rd.forward(request, response);
+			} else {
+				RequestDispatcher rd = request.getRequestDispatcher("registration.jsp");
+				request.setAttribute("error", error);
+				request.setAttribute("userData", userData);
+				rd.forward(request, response);
+			}
 		}
 	}
 
