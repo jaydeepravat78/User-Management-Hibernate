@@ -29,18 +29,17 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 			</c:if>
 		</div>
 		<form class="form-horizontal" id="reg_form" method="post"
-			action='<c:if test="${requestScope.userData != null}">UpdateController?id=${requestScope.userData.getId()}</c:if><c:if test="${requestScope.userData == null}">RegisterController</c:if>'
+			action='<c:if test="${userData != null}">UpdateController?id=${id}</c:if><c:if test="${userData == null}">RegisterController</c:if>'
 			enctype="multipart/form-data">
 			<h2 class="text-center">
-				<c:if test="${requestScope.userData != null}">Edit Profile</c:if>
-				<c:if test="${requestScope.userData == null}">Register</c:if>
+				<c:if test="${userData != null}">Edit Profile</c:if>
+				<c:if test="${userData == null}">Register</c:if>
 			</h2>
 			<div class="form-group">
 				<label for="inputName" class="col-sm-2 control-label">Name</label>
 				<div class="col-sm-10">
 					<input type="text" name="user_name" class="form-control"
-						id="inputName"
-						value='<c:out value="${requestScope.userData.getName()}" />'
+						id="inputName" value='${userData.getName()}${userError.getName()}'
 						placeholder="Sample" maxlength="45">
 				</div>
 			</div>
@@ -49,9 +48,9 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 				<div class="col-sm-10">
 					<input type="text" name="user_email" class="form-control"
 						id="inputEmail" maxlength="45"
-						value='<c:out value="${requestScope.userData.getEmail()}" />'
+						value='${userData.getEmail()}${userError.getEmail()}'
 						placeholder="sample@gmail.com"
-						<c:if test="${requestScope.userData != null }">disabled</c:if>>
+						<c:if test="${userData != null }">disabled</c:if>>
 				</div>
 			</div>
 			<div class="form-group">
@@ -59,7 +58,7 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 				<div class="col-sm-10">
 					<input type="password" class="form-control" name="user_password"
 						id="inputPassword"
-						value='<c:out value="${requestScope.userData.getPassword()}" />'
+						value='${userData.getPassword()}${userError.getPassword()}'
 						placeholder="********">
 				</div>
 			</div>
@@ -68,8 +67,7 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 					Password</label>
 				<div class="col-sm-10">
 					<input type="password" class="form-control" name="confirm_psw"
-						id="inputConfirmPassword"
-						value='<c:out value="${requestScope.userData.getPassword()}" />'
+						id="inputConfirmPassword" value='${userData.getPassword()}'
 						placeholder="********">
 				</div>
 			</div>
@@ -79,7 +77,7 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 				<div class="col-sm-10">
 					<input type="text" class="form-control" name="user_phone"
 						id="inputPhone"
-						value='<c:out value="${requestScope.userData.getPhone()}" />'
+						value='${userData.getPhone()}${userError.getPhone()}'
 						placeholder="[7-9]123456789">
 				</div>
 			</div>
@@ -88,11 +86,13 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 				<div class="col-sm-6">
 					<label class="radio-inline"> <input type="radio"
 						id="inputGender1" name="gender" value="male"
-						<c:if test="${requestScope.userData.getGender() == 'male'}"> Checked </c:if> />
+						<c:if test="${userData.getGender() == 'male'}"> Checked </c:if>
+						<c:if test="${userError.getGender() == 'male'}"> Checked </c:if> />
 						Male
 					</label> <label class="radio-inline"> <input type="radio"
 						id="inputGender2" name="gender" value="female"
-						<c:if test="${requestScope.userData.getGender() == 'female'}">Checked</c:if> />
+						<c:if test="${userData.getGender() == 'female'}">Checked</c:if>
+						<c:if test="${userError.getGender() == 'female'}">Checked</c:if> />
 						Female
 					</label>
 				</div>
@@ -102,19 +102,23 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 				<div class="col-sm-6">
 					<label class="checkbox-inline"> <input type="checkbox"
 						id="inputLang1" name="lang" value="Java"
-						<c:forEach var="language" items="${requestScope.userData.getLang()}"> <c:if test="${language eq 'Java'}">checked='checked'</c:if> </c:forEach>>
+						<c:forEach var="language" items="${userData.getLang()}"> <c:if test="${language eq 'Java'}">checked='checked'</c:if> </c:forEach>
+						<c:forEach var="language" items="${userError.getLang()}"> <c:if test="${language eq 'Java'}">checked='checked'</c:if> </c:forEach>>
 						Java
 					</label> <label class="checkbox-inline"> <input type="checkbox"
 						id="inputLang2" name="lang" value="C++"
-						<c:forEach var="language" items="${requestScope.userData.getLang()}"> <c:if test="${language eq 'C++'}">checked='checked'</c:if> </c:forEach>>
+						<c:forEach var="language" items="${userData.getLang()}"> <c:if test="${language eq 'C++'}">checked='checked'</c:if> </c:forEach>
+						<c:forEach var="language" items="${userError.getLang()}"> <c:if test="${language eq 'C++'}">checked='checked'</c:if> </c:forEach>>
 						C++
 					</label> <label class="checkbox-inline"> <input type="checkbox"
 						id="inputLang3" name="lang" value="Python"
-						<c:forEach var="language" items="${requestScope.userData.getLang()}"> <c:if test="${language eq 'Python'}">checked='checked'</c:if> </c:forEach>>
+						<c:forEach var="language" items="${userData.getLang()}"> <c:if test="${language eq 'Python'}">checked='checked'</c:if> </c:forEach>
+						<c:forEach var="language" items="${userError.getLang()}"> <c:if test="${language eq 'Python'}">checked='checked'</c:if> </c:forEach>>
 						Python
 					</label> <label class="checkbox-inline"> <input type="checkbox"
 						id="inputLang4" name="lang" value="Kotlin"
-						<c:forEach var="language" items="${requestScope.userData.getLang()}"> <c:if test="${language eq 'Kotlin'}">checked='checked'</c:if> </c:forEach>>
+						<c:forEach var="language" items="${userData.getLang()}"> <c:if test="${language eq 'Kotlin'}">checked='checked'</c:if> </c:forEach>
+						<c:forEach var="language" items="${userError.getLang()}"> <c:if test="${language eq 'Kotlin'}">checked='checked'</c:if> </c:forEach>>
 						Kotlin
 					</label>
 				</div>
@@ -126,11 +130,14 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 					<select id="inputGame" name="games" class="form-control">
 						<option value="">Select</option>
 						<option value="GTA"
-							<c:if test="${requestScope.userData.getGame() == 'GTA'}"> <%= "selected='selected'" %> </c:if>>GTA</option>
+							<c:if test="${userData.getGame() == 'GTA'}">selected='selected'</c:if>
+							<c:if test="${userError.getGame() == 'GTA'}">selected='selected'</c:if>>GTA</option>
 						<option value="Fifa"
-							<c:if test="${requestScope.userData.getGame() == 'Fifa'}"> <%= "selected='selected'" %> </c:if>>Fifa</option>
+							<c:if test="${userData.getGame() == 'Fifa'}">selected='selected'</c:if>
+							<c:if test="${userError.getGame() == 'Fifa'}">selected='selected'</c:if>>Fifa</option>
 						<option value="Battlefield"
-							<c:if test="${requestScope.userData.getGame() == 'Battlefield'}"> <%= "selected='selected'" %> </c:if>>Battlefield</option>
+							<c:if test="${userData.getGame() == 'Battlefield'}">selected='selected'</c:if>
+							<c:if test="${userError.getGame() == 'Battlefield'}">selected='selected'</c:if>>Battlefield</option>
 					</select>
 				</div>
 			</div>
@@ -138,15 +145,52 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 				<label for="secQues" class="col-sm-2 control-label">Security
 					Question</label>
 				<div class="col-sm-10">
+					<label class="control-label">What is the name of your first
+						school?</label>
+				</div>
+				<div class="col-sm-offset-2 col-sm-10">
 					<input type="text" class="form-control" name="secQues" id="secQues"
-						placeholder="What is the name of your first school?"
-						maxlength="45" value="${requestScope.userData.getSecQues()}">
+						placeholder="School name" maxlength="45"
+						value="${userData.getSecQues()}${userError.getSecQues()}">
 				</div>
 			</div>
 			<div id="main-container">
-				<c:if test="${requestScope.userData != null }">
-					<c:forEach var="address"
-						items="${requestScope.userData.getAddresses()}">
+				<c:if test="${userData != null }">
+					<c:forEach var="address" items="${userData.getAddresses()}">
+						<div class="container-item">
+							<div class="form-group">
+								<label for="inputAddress" class="col-sm-2 control-label">Address</label>
+								<div class="col-sm-10">
+									<div class="row">
+										<div class="col-sm-4 mb-10">
+											<input type="text" name="user_street" class="form-control"
+												placeholder="Street" value="${address.getStreet()}"
+												maxlength="45">
+										</div>
+										<div class="col-sm-3 mb-10">
+											<input type="text" name="user_city" class="form-control"
+												placeholder="City" value="${address.getCity()}"
+												maxlength="45">
+										</div>
+										<div class="col-sm-3 mb-10">
+											<input type="text" name="user_state" class="form-control"
+												placeholder="State" value="${address.getState()}"
+												maxlength="45">
+										</div>
+										<input type="text" name="address_id"
+											value="${address.getAddress_id()}" hidden="hidden">
+										<div class="col-sm-2 mb-10">
+											<a href="javascript:void(0)"
+												class="remove-item btn btn-danger">Delete</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</c:forEach>
+				</c:if>
+				<c:if test="${userError != null }">
+					<c:forEach var="address" items="${userError.getAddresses()}">
 						<div class="container-item">
 							<div class="form-group">
 								<label for="inputAddress" class="col-sm-2 control-label">Address</label>
@@ -180,7 +224,7 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 					</c:forEach>
 				</c:if>
 				<c:if
-					test="${requestScope.userData == null || requestScope.userData.getAddresses().size() == 0}">
+					test="${(userError == null && userData == null) || userData.getAddresses().size() == 0 }">
 					<div class="container-item">
 						<div class="form-group">
 							<label for="inputAddress" class="col-sm-2 control-label">Address</label>
@@ -220,13 +264,13 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 					<input type="file" name="user_photo" class="btn"
 						accept="image/png, image/gif, image/jpeg">
 				</div>
-				<c:if test="${requestScope.userData != null}">
-					<div class="col-sm-5">
+				<c:if test="${userData != null}">
+					<div class="col-sm-5 text-center">
 
-						<c:if test="${not empty requestScope.userData.getProfilePic()}">
+						<c:if test="${not empty userData.getProfilePic()}">
 							<img class="img-circle img-thumbnail img-responsive profile"
 								alt="profilePic"
-								src="data:image/jpg;base64,${requestScope.userData.getProfilePic()}">
+								src="data:image/jpg;base64,${userData.getProfilePic()}">
 						</c:if>
 					</div>
 				</c:if>
@@ -237,10 +281,10 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 						<c:when test="${sessionScope.admin != null}">
 							<a href="dashboard.jsp">Dashboard</a>
 						</c:when>
-						<c:when test="${requestScope.userData != null }">
+						<c:when test="${userData != null }">
 							<a href="home.jsp">Home</a>
 						</c:when>
-						<c:when test="${requestScope.userData == null}">
+						<c:when test="${userData == null}">
 							<a href="index.jsp">Already have an account?</a>
 						</c:when>
 					</c:choose>
@@ -249,9 +293,9 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 			<div class="form-group">
 				<div class="col-sm-offset-2 col-sm-10">
 					<button type="submit" class="btn btn-lg btn-success">
-						<c:if test="${requestScope.userData != null }">
+						<c:if test="${userData != null }">
 					Update</c:if>
-						<c:if test="${requestScope.userData == null }">Register</c:if>
+						<c:if test="${userData == null }">Register</c:if>
 					</button>
 					<button type="reset" class="btn btn-lg btn-danger btn-reset">Reset</button>
 				</div>

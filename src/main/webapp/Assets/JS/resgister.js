@@ -1,12 +1,3 @@
-$('#add-more').cloneData({
-	mainContainerId: 'main-container', // Main container Should be ID
-	cloneContainer: 'container-item', // Which you want to clone
-	removeButtonClass: 'remove-item', // Remove button for remove cloned HTML
-	removeConfirm: true, // default true confirm before delete clone item
-	removeConfirmMessage: 'Are you sure want to delete?', // confirm delete message
-	minLimit: 1, // Default 1 set minimum clone HTML required
-	maxLimit: 0, // Default unlimited or set maximum limit of clone HTML
-});
 
 jQuery.validator.addMethod("name_regex", function(value, element) {
 	return this.optional(element) || /^[a-zA-Z ]+$/i.test(value);
@@ -20,6 +11,20 @@ jQuery.validator.addMethod("password_regex", function(value, element) {
 jQuery.validator.addMethod("validate_email", function(value, element) {
 	return this.optional(element) || /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/i.test(value);	
 }, "Please enter a valid Email.");
+
+$(document).ready(function () {
+	
+
+$('#add-more').cloneData({
+	mainContainerId: 'main-container', // Main container Should be ID
+	cloneContainer: 'container-item', // Which you want to clone
+	removeButtonClass: 'remove-item', // Remove button for remove cloned HTML
+	removeConfirm: true, // default true confirm before delete clone item
+	removeConfirmMessage: 'Are you sure want to delete?', // confirm delete message
+	minLimit: 1, // Default 1 set minimum clone HTML required
+	maxLimit: 0, // Default unlimited or set maximum limit of clone HTML
+});
+
 
 $("#reg_form").validate({
 	rules: {
@@ -121,4 +126,5 @@ $("#reg_form").validate({
 	submitHandler: function(form) {
 		form.submit();
 	}
+});
 });

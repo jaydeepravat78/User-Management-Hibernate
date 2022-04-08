@@ -46,6 +46,7 @@ public class ForgotController extends HttpServlet {
 				response.sendRedirect("index.jsp");
 			}
 			else {
+				request.setAttribute("errorEmail", user.getEmail());
 				request.setAttribute("errorMessage", "Unable to change password! Please check your input!!");
 	            RequestDispatcher rd = request.getRequestDispatcher("forgot.jsp");
 	            rd.forward(request, response);

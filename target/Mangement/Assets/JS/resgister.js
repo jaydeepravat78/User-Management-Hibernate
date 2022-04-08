@@ -1,3 +1,20 @@
+
+jQuery.validator.addMethod("name_regex", function(value, element) {
+	return this.optional(element) || /^[a-zA-Z ]+$/i.test(value);
+}, "*Name with only a-z A-Z."); // check if a valid name
+jQuery.validator.addMethod("phone_regex", function(value, element) {
+	return this.optional(element) || /^[7-9][0-9]{9}$/i.test(value);
+}, "*Phone Number with only 0-9 and should start with 7-9. length: 10"); // phone number check
+jQuery.validator.addMethod("password_regex", function(value, element) {
+	return this.optional(element) || /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,30}$/i.test(value);
+}, "*Password should have minimum 8 and maximum 30 character with a number, alphabet character and a special character"); // password check 
+jQuery.validator.addMethod("validate_email", function(value, element) {
+	return this.optional(element) || /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/i.test(value);	
+}, "Please enter a valid Email.");
+
+$(document).ready(function () {
+	
+
 $('#add-more').cloneData({
 	mainContainerId: 'main-container', // Main container Should be ID
 	cloneContainer: 'container-item', // Which you want to clone
@@ -7,16 +24,6 @@ $('#add-more').cloneData({
 	minLimit: 1, // Default 1 set minimum clone HTML required
 	maxLimit: 0, // Default unlimited or set maximum limit of clone HTML
 });
-
-jQuery.validator.addMethod("name_regex", function(value, element) {
-	return this.optional(element) || /^[a-zA-Z ]+$/i.test(value);
-}, "*Name with only a-z A-Z."); // check if a valid name
-jQuery.validator.addMethod("phone_regex", function(value, element) {
-	return this.optional(element) || /^[7-9][0-9]{9}$/i.test(value);
-}, "*Phone Number with only 0-9 and should start with 7-9. length: 10"); // phone number check
-jQuery.validator.addMethod("password_regex", function(value, element) {
-	return this.optional(element) || /^[a-z0-9!@#$%^&*()_\\.\\-_]{8,30}$/i.test(value);
-}, "*Password should have minimum 8 and maximum 30 character"); // password check
 
 
 $("#reg_form").validate({
@@ -28,7 +35,7 @@ $("#reg_form").validate({
 		},
 		'user_email': {
 			required: true,
-			email: true,
+			validate_email: true,
 			remote: {
 				url: "EmailCheckController",
 				type: "post",
@@ -64,6 +71,9 @@ $("#reg_form").validate({
 		'user_state' : {
 			required: true,
 		},
+		'secQues': {
+			required: true
+		}
 	},
 	messages: {
 		'user_name': {
@@ -71,7 +81,6 @@ $("#reg_form").validate({
 		},
 		'user_email': {
 			required: "*Please enter your email",
-			email: "*Please enter a valid email address!",
 			remote: "*Email already exists",
 		},
 		'user_password': {
@@ -101,6 +110,9 @@ $("#reg_form").validate({
 		},
 		'user_state' : {
 			required: "*Please enter your State",
+		},
+		'secQues': {
+			required: "*Please answer the security question",
 		}
 	},
 	errorPlacement: function(error, element) {
@@ -115,4 +127,4 @@ $("#reg_form").validate({
 		form.submit();
 	}
 });
-
+});

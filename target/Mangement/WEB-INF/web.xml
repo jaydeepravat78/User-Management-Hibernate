@@ -14,6 +14,10 @@
 		<filter-name>ValidationFilter</filter-name>
 		<url-pattern>/RegisterController</url-pattern>
 	</filter-mapping>
+	<filter-mapping>
+		<filter-name>ValidationFilter</filter-name>
+		<url-pattern>/UpdateController</url-pattern>
+	</filter-mapping>
 	<servlet>
 		<servlet-name>RegisterController</servlet-name>
 		<display-name>RegisterController</display-name>

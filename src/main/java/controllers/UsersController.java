@@ -3,7 +3,6 @@ package controllers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,7 +29,7 @@ import services.UserServiceImpl;
 /**
  * Servlet implementation class UsersController
  */
-@MultipartConfig(maxFileSize = 1216584)
+@MultipartConfig()
 public class UsersController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger log = Logger.getLogger(UsersController.class.getClass());

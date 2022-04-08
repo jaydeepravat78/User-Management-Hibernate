@@ -43,7 +43,7 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 				<label for="inputEmail" class="col-sm-2 control-label">Email</label>
 				<div class="col-sm-10">
 					<input type="email" name="user_email" class="form-control"
-						id="inputEmail" placeholder="abc@gmail.com">
+						id="inputEmail" placeholder="abc@gmail.com" value="${errorEmail}">
 				</div>
 			</div>
 			<div class="form-group">
