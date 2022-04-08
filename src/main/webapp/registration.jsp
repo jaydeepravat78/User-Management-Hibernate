@@ -29,7 +29,7 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 			</c:if>
 		</div>
 		<form class="form-horizontal" id="reg_form" method="post"
-			action='<c:if test="${userData != null}">UpdateController?id=${userData.getId()}</c:if><c:if test="${userData == null}">RegisterController</c:if>'
+			action='<c:if test="${userData != null}">UpdateController?id=${id}</c:if><c:if test="${userData == null}">RegisterController</c:if>'
 			enctype="multipart/form-data">
 			<h2 class="text-center">
 				<c:if test="${userData != null}">Edit Profile</c:if>
@@ -223,7 +223,8 @@ response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
 						</div>
 					</c:forEach>
 				</c:if>
-				<c:if test="${(userError == null && userData == null) || userData.getAddresses().size() == 0 }">
+				<c:if
+					test="${(userError == null && userData == null) || userData.getAddresses().size() == 0 }">
 					<div class="container-item">
 						<div class="form-group">
 							<label for="inputAddress" class="col-sm-2 control-label">Address</label>

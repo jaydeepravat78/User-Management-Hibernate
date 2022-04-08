@@ -5,7 +5,9 @@ $('#fileUpload').validate({
 		}
 	},
 	messages: {
+		excelFile: {
 		required: "*Please submit an excel file"
+		}
 	}
 });
 $(document).ready(function() {

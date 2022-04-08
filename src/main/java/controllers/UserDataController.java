@@ -28,6 +28,7 @@ public class UserDataController extends HttpServlet {
 			UserService service = new UserServiceImpl();
 			User user = service.getUser(id);
 			if (user != null) {
+				request.setAttribute("id", id);
 				request.setAttribute("userData", user);
 				RequestDispatcher rd = request.getRequestDispatcher("registration.jsp");
 				rd.forward(request, response);

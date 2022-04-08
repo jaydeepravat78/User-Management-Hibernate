@@ -20,7 +20,7 @@ public class Validation {
 		UserService service = new UserServiceImpl();
 		if (email == null || email.isEmpty())
 			return "*Email should not be empty\n";
-		else if (!Pattern.matches("^(.+)@(.+)$", email))
+		else if (!Pattern.matches("^([a-zA-Z0-9_\\.\\-])+\\@(([a-zA-Z0-9\\-])+\\.)+([a-zA-Z0-9]{2,4})+$", email)) // !Pattern.matches("^(.+)@(.+)$", email)
 			return "*Please enter a valid email\n";
 		else if (service.checkEmail(email))
 			return "*Email already exists\n";
@@ -68,8 +68,8 @@ public class Validation {
 	public static String checkPassword(String Password) {
 		if (Password == null || Password.isEmpty())
 			return "*Please enter a password";
-		else if (Pattern.matches("^[a-z0-9!@#$%^&*()_\\.\\-_]{8,30}$", Password))
-			return "*Password should have minimum 8 and maximum 30 character with a number, upper character, lower character and a special character\n";
+		else if (!Pattern.matches("^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,30}$", Password))
+			return "*Password should have minimum 8 and maximum 30 character with a number, alphabet character and a special character\n";
 		else
 			return "";
 	}

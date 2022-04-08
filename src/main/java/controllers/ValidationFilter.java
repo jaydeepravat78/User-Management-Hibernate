@@ -1,7 +1,6 @@
 package controllers;
 
 import java.io.IOException;
-import java.net.http.HttpRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,11 +12,11 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import models.Address;
 import models.User;
+import services.UserService;
+import services.UserServiceImpl;
 import utility.Validation;
 
 /**
@@ -34,8 +33,7 @@ public class ValidationFilter implements Filter {
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		HttpServletRequest req = (HttpServletRequest) request;
-		HttpSession session = req.getSession(false);
+		String id = request.getParameter("id");
 		User userData = new User();
 		userData.setName(request.getParameter("user_name"));
 		userData.setPhone(request.getParameter("user_phone"));
@@ -58,7 +56,7 @@ public class ValidationFilter implements Filter {
 		}
 		userData.setAddresses(addresses);
 		String error = "";
-		if (session == null) {
+		if (id == null) {
 			userData.setEmail(request.getParameter("user_email"));
 			error += Validation.checkEmail(userData.getEmail());
 		}
@@ -76,13 +74,16 @@ public class ValidationFilter implements Filter {
 		if (error.isEmpty())
 			chain.doFilter(request, response);
 		else {
-			if (session == null) {
+			if (id == null) {
 				RequestDispatcher rd = request.getRequestDispatcher("registration.jsp");
 				request.setAttribute("error", error);
 				request.setAttribute("userError", userData);
 				rd.forward(request, response);
 			} else {
 				RequestDispatcher rd = request.getRequestDispatcher("registration.jsp");
+				UserService service = new UserServiceImpl();
+				userData.setEmail(service.getUser(Integer.parseInt(id)).getEmail());
+				request.setAttribute("id", id);
 				request.setAttribute("error", error);
 				request.setAttribute("userData", userData);
 				rd.forward(request, response);
