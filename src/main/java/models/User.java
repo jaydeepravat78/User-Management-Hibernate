@@ -1,8 +1,15 @@
 package models;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class User {
+public class User implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int id;
 	public String name;
 	private String email;
@@ -33,11 +40,11 @@ public class User {
 	}
 
 	public List<Address> getAddresses() {
-		return addresses;
+		return Collections.unmodifiableList(this.addresses);
 	}
 
 	public void setAddresses(List<Address> addresses) {
-		this.addresses = addresses;
+		this.addresses = Collections.unmodifiableList(addresses);
 	}
 
 	public int getId() {
@@ -97,11 +104,11 @@ public class User {
 	}
 
 	public String[] getLang() {
-		return lang;
+		return Arrays.copyOf(this.lang, lang.length);
 	}
 
 	public void setLang(String[] lang) {
-		this.lang = lang;
+		this.lang = Arrays.copyOf(lang, lang.length);
 	}
 
 	public String getProfilePic() {

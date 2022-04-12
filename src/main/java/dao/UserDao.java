@@ -6,25 +6,25 @@ import models.Address;
 import models.User;
 
 public interface UserDao {
-	public User getUserData(String email, String password);
+	User getUserData(String email, String password);
 
-	public boolean addUser(User u);
+	boolean addUser(User u);
 
-	public boolean updatePassword(User u);
+	boolean updatePassword(User u);
 
-	public List<User> getAllUser();
+	List<User> getAllUser();
 
-	public boolean deleteUser(int id);
+	boolean deleteUser(int id);
 
-	public boolean emailCheck(String email);
+	boolean emailCheck(String email);
 
-	public User getUserData(int id);
+	User getUserData(int id);
 
-	public boolean updateUserData(User u);
+	boolean updateUserData(User u);
 	
-	public boolean addNewAddress(Address address, int id);
+	boolean addNewAddress(Address address, int id);
 	
-	public boolean updateOldAddress(Address address);
+	boolean updateOldAddress(Address address);
 	
-	public boolean deleteOldAddress(int addressId); 
+	boolean deleteOldAddress(int addressId); 
 }

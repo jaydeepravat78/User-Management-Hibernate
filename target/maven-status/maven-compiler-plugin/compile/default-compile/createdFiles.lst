@@ -1,14 +1,17 @@
 controllers\RegisterController.class
+dao\UserDaoImpl.class
 controllers\DeleteController.class
 utility\Validation.class
 services\UserService.class
 services\UserServiceImpl.class
+controllers\UserDataController.class
 models\User.class
 controllers\DashboardController.class
 dao\UserDao.class
 utility\KeyGeneration.class
 controllers\ValidationFilter.class
 controllers\UsersController.class
+utility\ReadBytes.class
 controllers\EmailCheckController.class
 models\Address.class
 utility\ManagementConnection.class

@@ -3,6 +3,7 @@ package dao;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -51,8 +52,7 @@ public class UserDaoImpl implements UserDao {
 	 */
 	@Override
 	public User getUserData(String email, String password) {
-		// TODO Auto-generated method stub
-		User user = null;
+		User newUser = null;
 		Connection con = null;
 		PreparedStatement stmt = null;
 		PreparedStatement stmt2 = null;
@@ -61,54 +61,66 @@ public class UserDaoImpl implements UserDao {
 			stmt = con.prepareStatement(GET_USER_DETAILS);
 			stmt.setString(1, email);
 			ResultSet rs = stmt.executeQuery();
-			if (rs.next()) {
-				if (password.equals(KeyGeneration.decrypt(rs.getString("password")))) {
-					user = new User();
-					user.setId(rs.getInt("id"));
-					user.setName(rs.getString("name"));
-					user.setEmail(rs.getString("email"));
-					user.setPassword(KeyGeneration.decrypt(rs.getString("password")));
-					user.setGender(rs.getString("gender"));
-					user.setPhone(rs.getString("phone"));
-					user.setLang(rs.getString("lang").split(" "));
-					user.setGame(rs.getString("game"));
-					user.setSecQues(rs.getString("secQuestion"));
-					user.setAdmin(rs.getBoolean("isAdmin"));
-					List<Address> addresses = new ArrayList<>();
-					InputStream profilePic = rs.getBinaryStream("photo");
-					if (profilePic != null) {
-						byte[] imageBytes;
-						try {
-							imageBytes = ReadBytes.readAllBytes(profilePic);
-							user.setProfilePic(Base64.getEncoder().encodeToString(imageBytes));
-						} catch (IOException e) {
-							log.error(e);
-						}
+			if (rs.next() && password.equals(KeyGeneration.decrypt(rs.getString("password")))) {
+				newUser = new User();
+				newUser.setId(rs.getInt("id"));
+				newUser.setName(rs.getString("name"));
+				newUser.setEmail(rs.getString("email"));
+				newUser.setPassword(KeyGeneration.decrypt(rs.getString("password")));
+				newUser.setGender(rs.getString("gender"));
+				newUser.setPhone(rs.getString("phone"));
+				newUser.setLang(rs.getString("lang").split(" "));
+				newUser.setGame(rs.getString("game"));
+				newUser.setSecQues(rs.getString("secQuestion"));
+				newUser.setAdmin(rs.getBoolean("isAdmin"));
+				List<Address> addresses = new ArrayList<>();
+				InputStream profilePic = rs.getBinaryStream("photo");
+				if (profilePic != null) {
+					byte[] imageBytes;
+					try {
+						imageBytes = ReadBytes.readAllBytes(profilePic);
+						newUser.setProfilePic(Base64.getEncoder().encodeToString(imageBytes));
+					} catch (IOException e) {
+						log.error(e);
 					}
-					stmt2 = con.prepareStatement(GET_ALL_USER_ADDRESS);
-					stmt2.setInt(1, user.getId());
-					ResultSet rs2 = stmt2.executeQuery();
-					while (rs2.next()) {
-						Address address = new Address();
-						address.setStreet(rs2.getString("street"));
-						address.setCity(rs2.getString("city"));
-						address.setState(rs2.getString("state"));
-						addresses.add(address);
-					}
-					user.setAddresses(addresses);
 				}
+				stmt2 = con.prepareStatement(GET_ALL_USER_ADDRESS);
+				stmt2.setInt(1, newUser.getId());
+				ResultSet rs2 = stmt2.executeQuery();
+				while (rs2.next()) {
+					Address address = new Address();
+					address.setStreet(rs2.getString("street"));
+					address.setCity(rs2.getString("city"));
+					address.setState(rs2.getString("state"));
+					addresses.add(address);
+				}
+				newUser.setAddresses(addresses);
+				rs.close();
+				rs2.close();
 			}
 		} catch (SQLException e) {
 			log.error(e);
 		} finally {
-			con = ManagementConnection.getUsersConnection().destroyConnection();
-			try {
-				stmt.close();
-			} catch (SQLException e) {
-				log.error(e);
-			}
+			if (con != null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					log.error(e);
+				}
+			if (stmt != null)
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					log.error(e);
+				}
+			if (stmt2 != null)
+				try {
+					stmt2.close();
+				} catch (SQLException e) {
+					log.error(e);
+				}
 		}
-		return user;
+		return newUser;
 	}
 
 	/**
@@ -134,18 +146,18 @@ public class UserDaoImpl implements UserDao {
 			stmt1.setString(3, user.getPassword());
 			stmt1.setString(4, user.getPhone());
 			stmt1.setString(5, user.getGender());
-			String language = "";
+			StringBuilder language = new StringBuilder();
 			String[] lang = user.getLang();
 			for (int i = 0; i < lang.length; i++) {
-				language += lang[i] + " ";
+				language.append(lang[i] + " ");
 			}
-			stmt1.setString(6, language);
+			stmt1.setString(6, language.toString());
 			stmt1.setInt(7, 0);
 			stmt1.setString(8, user.getGame());
 			InputStream profilePic = null;
-			if(user.getProfilePic() != null) {
-			profilePic = new ByteArrayInputStream(
-					Base64.getDecoder().decode(user.getProfilePic().getBytes()));
+			if (user.getProfilePic() != null) {
+				profilePic = new ByteArrayInputStream(
+						Base64.getDecoder().decode(user.getProfilePic().getBytes(StandardCharsets.UTF_8)));
 			}
 			stmt1.setBlob(9, profilePic);
 			stmt1.setString(10, user.getSecQues());
@@ -174,7 +186,12 @@ public class UserDaoImpl implements UserDao {
 		} catch (SQLException e) {
 			log.error(e);
 		} finally {
-			con = ManagementConnection.getUsersConnection().destroyConnection();
+			if (con != null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					log.error(e);
+				}
 			if (stmt1 != null)
 				try {
 					stmt1.close();
@@ -217,20 +234,23 @@ public class UserDaoImpl implements UserDao {
 			stmt1 = con.prepareStatement(GET_USER_DETAILS);
 			stmt1.setString(1, user.getEmail());
 			ResultSet rs = stmt1.executeQuery();
-			if (rs.next()) {
-				if (user.getGame().equals(rs.getString("game"))
-						&& user.getSecQues().equals(rs.getString("secQuestion"))) {
-					stmt2 = con.prepareStatement(UPDATE_PSW);
-					stmt2.setString(1, user.getPassword());
-					stmt2.setString(2, user.getEmail());
-					int i = stmt2.executeUpdate();
-					return i == 1;
-				}
+			if (rs.next() && user.getGame().equals(rs.getString("game"))
+					&& user.getSecQues().equals(rs.getString("secQuestion"))) {
+				stmt2 = con.prepareStatement(UPDATE_PSW);
+				stmt2.setString(1, user.getPassword());
+				stmt2.setString(2, user.getEmail());
+				int i = stmt2.executeUpdate();
+				return i == 1;
 			}
 		} catch (SQLException e) {
 			log.error(e);
 		} finally {
-			con = ManagementConnection.getUsersConnection().destroyConnection();
+			if (con != null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					log.error(e);
+				}
 			if (stmt1 != null)
 				try {
 					stmt1.close();
@@ -281,7 +301,12 @@ public class UserDaoImpl implements UserDao {
 		} catch (SQLException e) {
 			log.error(e);
 		} finally {
-			con = ManagementConnection.getUsersConnection().destroyConnection();
+			if (con != null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					log.error(e);
+				}
 			if (stmt != null)
 				try {
 					stmt.close();
@@ -313,8 +338,14 @@ public class UserDaoImpl implements UserDao {
 			int i = stmt.executeUpdate();
 			return i == 1;
 		} catch (SQLException e) {
+			log.error(e);
 		} finally {
-			con = ManagementConnection.getUsersConnection().destroyConnection();
+			if (con != null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					log.error(e);
+				}
 			if (stmt != null)
 				try {
 					stmt.close();
@@ -347,7 +378,12 @@ public class UserDaoImpl implements UserDao {
 		} catch (SQLException e) {
 			log.error(e);
 		} finally {
-			con = ManagementConnection.getUsersConnection().destroyConnection();
+			if (con != null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					log.error(e);
+				}
 			if (stmt != null)
 				try {
 					stmt.close();
@@ -371,13 +407,13 @@ public class UserDaoImpl implements UserDao {
 	public User getUserData(int id) {
 		User user = null;
 		Connection con = null;
-		PreparedStatement stmt = null;
+		PreparedStatement statement = null;
 		PreparedStatement stmt2 = null;
 		try {
 			con = ManagementConnection.getUsersConnection().getConnection();
-			stmt = con.prepareStatement(GET_USER);
-			stmt.setInt(1, id);
-			ResultSet rs = stmt.executeQuery();
+			statement = con.prepareStatement(GET_USER);
+			statement.setInt(1, id);
+			ResultSet rs = statement.executeQuery();
 			if (rs.next()) {
 				user = new User();
 				user.setId(rs.getInt("id"));
@@ -413,16 +449,30 @@ public class UserDaoImpl implements UserDao {
 					addresses.add(address);
 				}
 				user.setAddresses(addresses);
+				rs.close();
+				rs2.close();
 			}
 		} catch (SQLException e) {
 			log.error(e);
 		} finally {
-			con = ManagementConnection.getUsersConnection().destroyConnection();
-			try {
-				stmt.close();
-			} catch (SQLException e) {
-				log.error(e);
-			}
+			if (con != null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					log.error(e);
+				}
+			if (statement != null)
+				try {
+					statement.close();
+				} catch (SQLException e) {
+					log.error(e);
+				}
+			if (stmt2 != null)
+				try {
+					stmt2.close();
+				} catch (SQLException e) {
+					log.error(e);
+				}
 		}
 		return user;
 	}
@@ -448,14 +498,14 @@ public class UserDaoImpl implements UserDao {
 			stmt.setString(2, user.getPassword());
 			stmt.setString(3, user.getPhone());
 			stmt.setString(4, user.getGender());
-			String language = "";
+			StringBuilder language = new StringBuilder();
 			String[] lang = user.getLang();
 			for (int i = 0; i < lang.length; i++) {
-				language += lang[i] + " ";
+				language.append(lang[i] + " ");
 			}
-			stmt.setString(5, language);
+			stmt.setString(5, language.toString());
 			InputStream profilePic = new ByteArrayInputStream(
-					Base64.getDecoder().decode(user.getProfilePic().getBytes()));
+					Base64.getDecoder().decode(user.getProfilePic().getBytes(StandardCharsets.UTF_8)));
 			stmt.setBlob(6, profilePic);
 			stmt.setString(7, user.getSecQues());
 			stmt.setString(8, user.getGame());
@@ -465,7 +515,12 @@ public class UserDaoImpl implements UserDao {
 		} catch (SQLException e) {
 			log.error(e);
 		} finally {
-			con = ManagementConnection.getUsersConnection().destroyConnection();
+			if (con != null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					log.error(e);
+				}
 			if (stmt != null)
 				try {
 					stmt.close();
@@ -502,12 +557,18 @@ public class UserDaoImpl implements UserDao {
 		} catch (SQLException e) {
 			log.error(e);
 		} finally {
-			con = ManagementConnection.getUsersConnection().destroyConnection();
-			try {
-				stmt.close();
-			} catch (SQLException e) {
-				log.error(e);
-			}
+			if (con != null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					log.error(e);
+				}
+			if (stmt != null)
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					log.error(e);
+				}
 		}
 		return false;
 	}
@@ -539,12 +600,18 @@ public class UserDaoImpl implements UserDao {
 		} catch (SQLException e) {
 			log.error(e);
 		} finally {
-			con = ManagementConnection.getUsersConnection().destroyConnection();
-			try {
-				stmt.close();
-			} catch (SQLException e) {
-				log.error(e);
-			}
+			if (con != null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					log.error(e);
+				}
+			if (stmt != null)
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					log.error(e);
+				}
 		}
 		return false;
 	}
@@ -573,12 +640,18 @@ public class UserDaoImpl implements UserDao {
 		} catch (SQLException e) {
 			log.error(e);
 		} finally {
-			con = ManagementConnection.getUsersConnection().destroyConnection();
-			try {
-				stmt.close();
-			} catch (SQLException e) {
-				log.error(e);
-			}
+			if (con != null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					log.error(e);
+				}
+			if (stmt != null)
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					log.error(e);
+				}
 		}
 		return false;
 	}

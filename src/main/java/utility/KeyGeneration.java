@@ -47,7 +47,7 @@ public class KeyGeneration {
 			setKey(secret);
 			Cipher cipher = Cipher.getInstance("AES");
 			cipher.init(Cipher.DECRYPT_MODE, secretKey);
-			return new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
+			return new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)), StandardCharsets.UTF_8);
 		} catch (Exception e) {
 			log.error(e);
 		}

@@ -90,6 +90,7 @@ public class UsersController extends HttpServlet {
 								user.setSecQues(cell.getStringCellValue());
 							break;
 						default:
+							log.error("Number of column exceded");
 						}
 					}
 					users.add(user);

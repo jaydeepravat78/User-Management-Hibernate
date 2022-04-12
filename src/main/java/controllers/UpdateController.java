@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
@@ -77,9 +76,9 @@ public class UpdateController extends HttpServlet {
 			if (service.updateUser(newUserData)) {
 				service.updateNewAddress(newAddresses, newUserData.getId());
 				log.info(newUserData.getId() + " user details updated");
-				if (session != null && session.getAttribute("admin") != null) {
+				if (session.getAttribute("admin") != null) {
 					response.sendRedirect("dashboard.jsp");
-				} else if (session != null & session.getAttribute("user") != null) {
+				} else if (session.getAttribute("user") != null) {
 					session.setAttribute("user", service.getUser(newUserData.getId()));
 					response.sendRedirect("home.jsp");
 				}

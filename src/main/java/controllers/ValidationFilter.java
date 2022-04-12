@@ -43,18 +43,18 @@ public class ValidationFilter implements Filter {
 		userData.setLang(request.getParameterValues("lang"));
 		userData.setGame(request.getParameter("games"));
 		userData.setSecQues(request.getParameter("secQues"));
-		List<Address> addresses = new ArrayList<>();
+		List<Address> userAddresses = new ArrayList<>();
 		String[] street = request.getParameterValues("user_street");
 		String[] city = request.getParameterValues("user_city");
 		String[] state = request.getParameterValues("user_state");
 		for (int i = 0; i < street.length; i++) {
-			Address address = new Address();
-			address.setStreet(street[i].trim());
-			address.setCity(city[i].trim());
-			address.setState(state[i].trim());
-			addresses.add(address);
+			Address userAddress = new Address();
+			userAddress.setStreet(street[i].trim());
+			userAddress.setCity(city[i].trim());
+			userAddress.setState(state[i].trim());
+			userAddresses.add(userAddress);
 		}
-		userData.setAddresses(addresses);
+		userData.setAddresses(userAddresses);
 		String error = "";
 		if (id == null) {
 			userData.setEmail(request.getParameter("user_email"));

@@ -6,24 +6,24 @@ import models.Address;
 import models.User;
 
 public interface UserService {
-	public User login(String email, String password);
+	User login(String email, String password);
 
-	public boolean signUp(User u);
+	boolean signUp(User u);
 
-	public boolean forgotPsw(User u);
+	boolean forgotPsw(User u);
 
-	public List<User> getUsers();
+	List<User> getUsers();
 
-	public boolean deleteUser(int id);
+	boolean deleteUser(int id);
 
-	public boolean checkEmail(String email);
+	boolean checkEmail(String email);
 
-	public User getUser(int id);
+	User getUser(int id);
 
-	public boolean updateUser(User u);
+	boolean updateUser(User u);
 
-	public String addAllUsers(List<User> users);
+	String addAllUsers(List<User> users);
 
-	public boolean updateNewAddress(List<Address> address, int id);
+	boolean updateNewAddress(List<Address> address, int id);
 
 }
