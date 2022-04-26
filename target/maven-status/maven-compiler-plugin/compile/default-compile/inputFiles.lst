@@ -7,10 +7,10 @@ G:\eclipse-workspace\Mangement\src\main\java\services\UserService.java
 G:\eclipse-workspace\Mangement\src\main\java\controllers\LogoutController.java
 G:\eclipse-workspace\Mangement\src\main\java\controllers\RegisterController.java
 G:\eclipse-workspace\Mangement\src\main\java\models\Address.java
+G:\eclipse-workspace\Mangement\src\main\java\utility\BeanProvider.java
 G:\eclipse-workspace\Mangement\src\main\java\controllers\UserDataController.java
 G:\eclipse-workspace\Mangement\src\main\java\utility\Validation.java
 G:\eclipse-workspace\Mangement\src\main\java\services\UserServiceImpl.java
-G:\eclipse-workspace\Mangement\src\main\java\utility\ManagementConnection.java
 G:\eclipse-workspace\Mangement\src\main\java\controllers\EmailCheckController.java
 G:\eclipse-workspace\Mangement\src\main\java\controllers\UsersController.java
 G:\eclipse-workspace\Mangement\src\main\java\utility\ReadBytes.java

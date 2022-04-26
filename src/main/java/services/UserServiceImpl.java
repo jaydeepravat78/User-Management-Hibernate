@@ -3,14 +3,21 @@ package services;
 import java.util.List;
 
 import dao.UserDao;
-import dao.UserDaoImpl;
 import models.Address;
 import models.User;
 import utility.KeyGeneration;
 import utility.Validation;
 
 public class UserServiceImpl implements UserService {
-	public static final UserDao dao = new UserDaoImpl();
+	private UserDao dao;
+
+	public UserDao getDao() throws CloneNotSupportedException {
+		return (UserDao) this.dao.clone();
+	}
+
+	public void setDao(UserDao dao) throws CloneNotSupportedException {
+		this.dao = (UserDao) dao.clone();
+	}
 
 	@Override
 	public User login(String email, String password) {
@@ -90,12 +97,12 @@ public class UserServiceImpl implements UserService {
 			if (newAddress != null) {
 				dao.updateOldAddress(newAddress);
 			} else {
-				dao.deleteOldAddress(oldAddress.getAddress_id());
+				dao.deleteOldAddress(oldAddress);
 			}
 		}
 		for (Address newAddress : newAddresses) {
 			if (newAddress.getAddress_id() == 0) {
-				dao.addNewAddress(newAddress, userId);
+				dao.addNewAddress(newAddress);
 			}
 		}
 		return false;

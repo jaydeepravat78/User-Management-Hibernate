@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 import models.Address;
 import models.User;
 import services.UserService;
-import services.UserServiceImpl;
+import utility.BeanProvider;
 import utility.ReadBytes;
 
 /**
@@ -29,7 +29,7 @@ import utility.ReadBytes;
 @MultipartConfig
 public class UpdateController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final Logger log = Logger.getLogger(UpdateController.class.getClass());
+	private static final Logger log = Logger.getLogger(UpdateController.class);
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
@@ -39,9 +39,10 @@ public class UpdateController extends HttpServlet {
 			throws ServletException, IOException {
 		HttpSession session = request.getSession(false);
 		if (session != null && (session.getAttribute("admin") != null || session.getAttribute("user") != null)) {
-			UserService service = new UserServiceImpl();
-			User newUserData = new User();
+			UserService service = BeanProvider.getUserService();
+			User newUserData = BeanProvider.getUserBean();
 			newUserData.setId(Integer.parseInt(request.getParameter("id")));
+			newUserData.setEmail(service.getUser(newUserData.getId()).getEmail());
 			newUserData.setName(request.getParameter("user_name").trim());
 			newUserData.setPhone(request.getParameter("user_phone").trim());
 			newUserData.setPassword(request.getParameter("user_password").trim());
@@ -49,6 +50,7 @@ public class UpdateController extends HttpServlet {
 			newUserData.setLang(request.getParameterValues("lang"));
 			newUserData.setGame(request.getParameter("games").trim());
 			newUserData.setSecQues(request.getParameter("secQues").trim());
+			newUserData.setAdmin(false);
 			Part filePart = request.getPart("user_photo");
 			if (filePart.getSize() > 0) {
 				InputStream newUserPic = filePart.getInputStream();
@@ -71,6 +73,7 @@ public class UpdateController extends HttpServlet {
 				if (address_id != null && !address_id[i].equals(""))
 					addressId = Integer.parseInt(address_id[i]);
 				address.setAddress_id(addressId);
+				address.setUser(newUserData);
 				newAddresses.add(address);
 			}
 			if (service.updateUser(newUserData)) {

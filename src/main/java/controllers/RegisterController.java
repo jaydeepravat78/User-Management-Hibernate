@@ -21,7 +21,7 @@ import models.Address;
 import models.User;
 
 
-import services.UserServiceImpl;
+import utility.BeanProvider;
 import utility.ReadBytes;
 import services.UserService;
 
@@ -35,7 +35,7 @@ public class RegisterController extends HttpServlet {
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	private static final Logger log = Logger.getLogger(RegisterController.class.getClass());
+	private static final Logger log = Logger.getLogger(RegisterController.class);
 
 
 	/**
@@ -45,8 +45,6 @@ public class RegisterController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		BasicConfigurator.configure();
-		
 		HttpSession session = request.getSession(false);
 		String redirect = "";
 		if(session != null)
@@ -54,7 +52,7 @@ public class RegisterController extends HttpServlet {
 		else
 			redirect += "index.jsp";
 		
-		User  user = new User();
+		User  user = BeanProvider.getUserBean();
 		user.setName(request.getParameter("user_name").trim());
 		user.setEmail(request.getParameter("user_email").trim());
 		user.setPhone(request.getParameter("user_phone").trim());
@@ -63,6 +61,7 @@ public class RegisterController extends HttpServlet {
 		user.setLang(request.getParameterValues("lang"));
 		user.setGame(request.getParameter("games").trim().trim());
 		user.setSecQues(request.getParameter("secQues").trim());
+		user.setAdmin(false);
 		Part filePart = request.getPart("user_photo"); 
 		InputStream userPic = filePart.getInputStream();
 		if(userPic != null) {
@@ -79,10 +78,11 @@ public class RegisterController extends HttpServlet {
 			address.setStreet(street[i].trim());
 			address.setCity(city[i].trim());
 			address.setState(state[i].trim());
+			address.setUser(user);
 			addresses.add(address);
 		}
 		user.setAddresses(addresses);
-		UserService service = new UserServiceImpl();
+		UserService service = BeanProvider.getUserService();
 		if(service.signUp(user)) {
 			log.info(user.getEmail() +  " signup successfully");
 			response.sendRedirect(redirect);

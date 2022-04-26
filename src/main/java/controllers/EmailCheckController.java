@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import services.UserServiceImpl;
+import utility.BeanProvider;
 import services.UserService;
 
 /**
@@ -23,7 +23,7 @@ public class EmailCheckController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String email = request.getParameter("user_email");
 		PrintWriter out = response.getWriter();
-		UserService service = new UserServiceImpl();
+		UserService service = BeanProvider.getUserService();
 		out.print(!service.checkEmail(email));
 	}
 

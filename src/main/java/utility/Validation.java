@@ -2,7 +2,6 @@ package utility;
 
 import java.util.regex.Pattern;
 
-import services.UserServiceImpl;
 import services.UserService;
 
 public class Validation {
@@ -17,7 +16,7 @@ public class Validation {
 	}
 
 	public static String checkEmail(String email) {
-		UserService service = new UserServiceImpl();
+		UserService service = BeanProvider.getUserService();
 		if (email == null || email.isEmpty())
 			return "*Email should not be empty\n";
 		else if (!Pattern.matches("^([a-zA-Z0-9_\\.\\-])+\\@(([a-zA-Z0-9\\-])+\\.)+([a-zA-Z0-9]{2,4})+$", email)) // !Pattern.matches("^(.+)@(.+)$", email)

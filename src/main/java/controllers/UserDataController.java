@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import models.User;
 import services.UserService;
-import services.UserServiceImpl;
+import utility.BeanProvider;
 
 /**
  * Servlet implementation class UserDataController
@@ -25,7 +25,7 @@ public class UserDataController extends HttpServlet {
 		HttpSession session = request.getSession(false);
 		if (session != null && (session.getAttribute("user") != null || session.getAttribute("admin") != null)) {
 			int id = Integer.parseInt(request.getParameter("id"));
-			UserService service = new UserServiceImpl();
+			UserService service = BeanProvider.getUserService();
 			User user = service.getUser(id);
 			if (user != null) {
 				request.setAttribute("id", id);

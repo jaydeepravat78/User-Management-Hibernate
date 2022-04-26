@@ -1,41 +1,36 @@
 package dao;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.AbstractQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 import models.Address;
 import models.User;
 import utility.KeyGeneration;
-import utility.ManagementConnection;
-import utility.ReadBytes;
 
-public class UserDaoImpl implements UserDao {
+public class UserDaoImpl implements UserDao, Cloneable {
 
-	private static final Logger log = Logger.getLogger(UserDaoImpl.class.getClass());
+	private static final Logger log = Logger.getLogger(UserDaoImpl.class);
+	private SessionFactory factory;
 
-	private static final String GET_USER_DETAILS = "select * from users where email = ?";
-	private static final String GET_ALL_USER_ADDRESS = "select * from addresses where user_id = ?";
-	private static final String ADD_USER = "insert into users (name, email, password, phone, gender, lang, isAdmin, game, photo, secQuestion) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	private static final String ADD_ADDRESS = "insert into addresses (user_id, street, city, state) values (?, ?, ?, ?)";
-	private static final String UPDATE_PSW = "update users set password = ? where email = ?";
-	private static final String GET_ALL_USERS = "select * from users where isAdmin = 0";
-	private static final String DELETE_USER = "delete from users where id = ?";
-	private static final String UPDATE_USER = "update users set name = ?, password = ?, phone = ?, gender = ?, lang = ?,  photo = ?, secQuestion = ?, game = ? where id = ?";
-	private static final String GET_USER = "select * from users where id = ?";
-	private static final String UPDATE_ADDRESS = "update addresses set street = ?, city = ?, state = ? where address_id = ?";
-	private static final String DElETE_ADDRESS = "delete from addresses where address_id = ?";
+	public SessionFactory getFactory() {
+		return factory;
+	}
+
+	public void setFactory(SessionFactory factory) {
+		this.factory = factory;
+	}
 
 	/**
 	 * 
@@ -52,75 +47,28 @@ public class UserDaoImpl implements UserDao {
 	 */
 	@Override
 	public User getUserData(String email, String password) {
-		User newUser = null;
-		Connection con = null;
-		PreparedStatement stmt = null;
-		PreparedStatement stmt2 = null;
+		User user = null;
+		Session session = factory.openSession();
 		try {
-			con = ManagementConnection.getUsersConnection().getConnection();
-			stmt = con.prepareStatement(GET_USER_DETAILS);
-			stmt.setString(1, email);
-			ResultSet rs = stmt.executeQuery();
-			if (rs.next() && password.equals(KeyGeneration.decrypt(rs.getString("password")))) {
-				newUser = new User();
-				newUser.setId(rs.getInt("id"));
-				newUser.setName(rs.getString("name"));
-				newUser.setEmail(rs.getString("email"));
-				newUser.setPassword(KeyGeneration.decrypt(rs.getString("password")));
-				newUser.setGender(rs.getString("gender"));
-				newUser.setPhone(rs.getString("phone"));
-				newUser.setLang(rs.getString("lang").split(" "));
-				newUser.setGame(rs.getString("game"));
-				newUser.setSecQues(rs.getString("secQuestion"));
-				newUser.setAdmin(rs.getBoolean("isAdmin"));
-				List<Address> addresses = new ArrayList<>();
-				InputStream profilePic = rs.getBinaryStream("photo");
-				if (profilePic != null) {
-					byte[] imageBytes;
-					try {
-						imageBytes = ReadBytes.readAllBytes(profilePic);
-						newUser.setProfilePic(Base64.getEncoder().encodeToString(imageBytes));
-					} catch (IOException e) {
-						log.error(e);
-					}
-				}
-				stmt2 = con.prepareStatement(GET_ALL_USER_ADDRESS);
-				stmt2.setInt(1, newUser.getId());
-				ResultSet rs2 = stmt2.executeQuery();
-				while (rs2.next()) {
-					Address address = new Address();
-					address.setStreet(rs2.getString("street"));
-					address.setCity(rs2.getString("city"));
-					address.setState(rs2.getString("state"));
-					addresses.add(address);
-				}
-				newUser.setAddresses(addresses);
-				rs.close();
-				rs2.close();
+			CriteriaBuilder cbuilder = session.getCriteriaBuilder();
+			AbstractQuery<User> cquery = cbuilder.createQuery(User.class);
+			Root<User> root = cquery.from(User.class);
+			cquery.where(cbuilder.equal(root.get("email"), email));
+			CriteriaQuery<User> select = ((CriteriaQuery<User>) cquery).select(root);
+			TypedQuery<User> criteria = session.createQuery(select);
+			user = criteria.getResultList().stream().findFirst().orElse(null);
+			if (user != null) {
+				if (password.equals(KeyGeneration.decrypt(user.getPassword())))
+					return user;
+				else
+					return null;
 			}
-		} catch (SQLException e) {
+		} catch (HibernateException e) {
 			log.error(e);
 		} finally {
-			if (con != null)
-				try {
-					con.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
-			if (stmt != null)
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
-			if (stmt2 != null)
-				try {
-					stmt2.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
+			session.close();
 		}
-		return newUser;
+		return user;
 	}
 
 	/**
@@ -134,82 +82,19 @@ public class UserDaoImpl implements UserDao {
 	 */
 	@Override
 	public boolean addUser(User user) {
-		Connection con = null;
-		PreparedStatement stmt1 = null;
-		PreparedStatement stmt2 = null;
-		PreparedStatement stmt3 = null;
+		Session session = factory.openSession();
+		Transaction transaction = null;
 		try {
-			con = ManagementConnection.getUsersConnection().getConnection();
-			stmt1 = con.prepareStatement(ADD_USER);
-			stmt1.setString(1, user.getName());
-			stmt1.setString(2, user.getEmail());
-			stmt1.setString(3, user.getPassword());
-			stmt1.setString(4, user.getPhone());
-			stmt1.setString(5, user.getGender());
-			StringBuilder language = new StringBuilder();
-			String[] lang = user.getLang();
-			for (int i = 0; i < lang.length; i++) {
-				language.append(lang[i] + " ");
-			}
-			stmt1.setString(6, language.toString());
-			stmt1.setInt(7, 0);
-			stmt1.setString(8, user.getGame());
-			InputStream profilePic = null;
-			if (user.getProfilePic() != null) {
-				profilePic = new ByteArrayInputStream(
-						Base64.getDecoder().decode(user.getProfilePic().getBytes(StandardCharsets.UTF_8)));
-			}
-			stmt1.setBlob(9, profilePic);
-			stmt1.setString(10, user.getSecQues());
-			int i = stmt1.executeUpdate();
-			if (i == 1) {
-				stmt2 = con.prepareStatement(GET_USER_DETAILS);
-				stmt2.setString(1, user.getEmail());
-				ResultSet rs = stmt2.executeQuery();
-				if (rs.next()) {
-					int id = rs.getInt("id");
-					stmt3 = con.prepareStatement(ADD_ADDRESS);
-					List<Address> addresses = user.getAddresses();
-					if (addresses != null) {
-						for (Address address : addresses) {
-							stmt3.setInt(1, id);
-							stmt3.setString(2, address.getStreet());
-							stmt3.setString(3, address.getCity());
-							stmt3.setString(4, address.getState());
-							stmt3.addBatch();
-						}
-						stmt3.executeBatch();
-					}
-					return true;
-				}
-			}
-		} catch (SQLException e) {
+			transaction = session.beginTransaction();
+			session.save(user);
+			transaction.commit();
+			return true;
+		} catch (HibernateException e) {
+			if (transaction != null)
+				transaction.rollback();
 			log.error(e);
 		} finally {
-			if (con != null)
-				try {
-					con.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
-			if (stmt1 != null)
-				try {
-					stmt1.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
-			if (stmt2 != null)
-				try {
-					stmt2.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
-			if (stmt3 != null)
-				try {
-					stmt3.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
+			session.close();
 		}
 		return false;
 	}
@@ -226,43 +111,32 @@ public class UserDaoImpl implements UserDao {
 	 */
 	@Override
 	public boolean updatePassword(User user) {
-		Connection con = null;
-		PreparedStatement stmt1 = null;
-		PreparedStatement stmt2 = null;
+		User userdata = null;
+		Session session = factory.openSession();
+		Transaction transaction = null;
 		try {
-			con = ManagementConnection.getUsersConnection().getConnection();
-			stmt1 = con.prepareStatement(GET_USER_DETAILS);
-			stmt1.setString(1, user.getEmail());
-			ResultSet rs = stmt1.executeQuery();
-			if (rs.next() && user.getGame().equals(rs.getString("game"))
-					&& user.getSecQues().equals(rs.getString("secQuestion"))) {
-				stmt2 = con.prepareStatement(UPDATE_PSW);
-				stmt2.setString(1, user.getPassword());
-				stmt2.setString(2, user.getEmail());
-				int i = stmt2.executeUpdate();
-				return i == 1;
-			}
-		} catch (SQLException e) {
-			log.error(e);
+			CriteriaBuilder cbuilder = session.getCriteriaBuilder();
+			AbstractQuery<User> cquery = cbuilder.createQuery(User.class);
+			Root<User> root = cquery.from(User.class);
+			cquery.where(cbuilder.equal(root.get("email"), user.getEmail()));
+			CriteriaQuery<User> select = ((CriteriaQuery<User>) cquery).select(root);
+			TypedQuery<User> criteria = session.createQuery(select);
+			userdata = criteria.getResultList().stream().findFirst().orElse(null);
+			if (userdata != null) {
+				if (userdata.getSecQues().equals(user.getSecQues()) && userdata.getGame().equals(user.getGame())) {
+					transaction = session.beginTransaction();
+					userdata.setPassword(user.getPassword());
+					session.update(userdata);
+					transaction.commit();
+					return true;
+				} else
+					return false;
+			} else
+				return false;
+		} catch (HibernateException exception) {
+			log.error(exception);
 		} finally {
-			if (con != null)
-				try {
-					con.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
-			if (stmt1 != null)
-				try {
-					stmt1.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
-			if (stmt2 != null)
-				try {
-					stmt2.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
+			session.close();
 		}
 		return false;
 	}
@@ -280,39 +154,20 @@ public class UserDaoImpl implements UserDao {
 	 */
 	@Override
 	public List<User> getAllUser() {
-		Connection con = null;
-		Statement stmt = null;
+		Session session = factory.openSession();
 		List<User> users = null;
 		try {
-			con = ManagementConnection.getUsersConnection().getConnection();
-			stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(GET_ALL_USERS);
-			users = new ArrayList<>();
-			while (rs.next()) {
-				User user = new User();
-				user.setId(rs.getInt("id"));
-				user.setName(rs.getString("name"));
-				user.setEmail(rs.getString("email"));
-				user.setPhone(rs.getString("phone"));
-				user.setGame(rs.getString("game"));
-				user.setGender(rs.getString("gender"));
-				users.add(user);
-			}
-		} catch (SQLException e) {
+			CriteriaBuilder cbuilder = session.getCriteriaBuilder();
+			AbstractQuery<User> cquery = cbuilder.createQuery(User.class);
+			Root<User> root = cquery.from(User.class);
+			cquery.where(cbuilder.equal(root.get("isAdmin"), false));
+			CriteriaQuery<User> select = ((CriteriaQuery<User>) cquery).select(root);
+			TypedQuery<User> criteria = session.createQuery(select);
+			users = criteria.getResultList();
+		} catch (HibernateException e) {
 			log.error(e);
 		} finally {
-			if (con != null)
-				try {
-					con.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
-			if (stmt != null)
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
+			session.close();
 		}
 		return users;
 	}
@@ -329,29 +184,20 @@ public class UserDaoImpl implements UserDao {
 	 */
 	@Override
 	public boolean deleteUser(int userId) {
-		Connection con = null;
-		PreparedStatement stmt = null;
+		Session session = factory.openSession();
+		Transaction transaction = null;
 		try {
-			con = ManagementConnection.getUsersConnection().getConnection();
-			stmt = con.prepareStatement(DELETE_USER);
-			stmt.setInt(1, userId);
-			int i = stmt.executeUpdate();
-			return i == 1;
-		} catch (SQLException e) {
+			transaction = session.beginTransaction();
+			User user = session.get(User.class, userId);
+			session.delete(user);
+			transaction.commit();
+			return true;
+		} catch (HibernateException e) {
+			if (transaction != null)
+				transaction.rollback();
 			log.error(e);
 		} finally {
-			if (con != null)
-				try {
-					con.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
-			if (stmt != null)
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
+			session.close();
 		}
 		return false;
 	}
@@ -367,29 +213,20 @@ public class UserDaoImpl implements UserDao {
 	 */
 	@Override
 	public boolean emailCheck(String email) {
-		Connection con = null;
-		PreparedStatement stmt = null;
+		Session session = factory.openSession();
 		try {
-			con = ManagementConnection.getUsersConnection().getConnection();
-			stmt = con.prepareStatement(GET_USER_DETAILS);
-			stmt.setString(1, email);
-			ResultSet rs = stmt.executeQuery();
-			return rs.next();
-		} catch (SQLException e) {
+			CriteriaBuilder cbuilder = session.getCriteriaBuilder();
+			CriteriaQuery<User> cquery = cbuilder.createQuery(User.class);
+			Root<User> root = cquery.from(User.class);
+			cquery.where(cbuilder.equal(root.get("email"), email));
+			CriteriaQuery<User> select = cquery.select(root);
+			TypedQuery<User> criteria = session.createQuery(select);
+			User user = criteria.getResultList().stream().findFirst().orElse(null);
+			return user != null;
+		} catch (HibernateException e) {
 			log.error(e);
 		} finally {
-			if (con != null)
-				try {
-					con.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
-			if (stmt != null)
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
+			session.close();
 		}
 		return false;
 	}
@@ -405,74 +242,15 @@ public class UserDaoImpl implements UserDao {
 	 */
 	@Override
 	public User getUserData(int id) {
+		Session session = factory.openSession();
 		User user = null;
-		Connection con = null;
-		PreparedStatement statement = null;
-		PreparedStatement stmt2 = null;
 		try {
-			con = ManagementConnection.getUsersConnection().getConnection();
-			statement = con.prepareStatement(GET_USER);
-			statement.setInt(1, id);
-			ResultSet rs = statement.executeQuery();
-			if (rs.next()) {
-				user = new User();
-				user.setId(rs.getInt("id"));
-				user.setName(rs.getString("name"));
-				user.setEmail(rs.getString("email"));
-				user.setPassword(KeyGeneration.decrypt(rs.getString("password")));
-				user.setGender(rs.getString("gender"));
-				user.setPhone(rs.getString("phone"));
-				user.setLang(rs.getString("lang").split(" "));
-				user.setGame(rs.getString("game"));
-				user.setSecQues(rs.getString("secQuestion"));
-				user.setAdmin(rs.getBoolean("isAdmin"));
-				InputStream profilePic = rs.getBinaryStream("photo");
-				if (profilePic != null) {
-					byte[] imageBytes;
-					try {
-						imageBytes = ReadBytes.readAllBytes(profilePic);
-						user.setProfilePic(Base64.getEncoder().encodeToString(imageBytes));
-					} catch (IOException e) {
-						log.error(e);
-					}
-				}
-				List<Address> addresses = new ArrayList<>();
-				stmt2 = con.prepareStatement(GET_ALL_USER_ADDRESS);
-				stmt2.setInt(1, user.getId());
-				ResultSet rs2 = stmt2.executeQuery();
-				while (rs2.next()) {
-					Address address = new Address();
-					address.setAddress_id(rs2.getInt("address_id"));
-					address.setStreet(rs2.getString("street"));
-					address.setCity(rs2.getString("city"));
-					address.setState(rs2.getString("state"));
-					addresses.add(address);
-				}
-				user.setAddresses(addresses);
-				rs.close();
-				rs2.close();
-			}
-		} catch (SQLException e) {
+			user = session.get(User.class, id);
+			user.setPassword(KeyGeneration.decrypt(user.getPassword()));
+		} catch (HibernateException e) {
 			log.error(e);
 		} finally {
-			if (con != null)
-				try {
-					con.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
-			if (statement != null)
-				try {
-					statement.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
-			if (stmt2 != null)
-				try {
-					stmt2.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
+			session.close();
 		}
 		return user;
 	}
@@ -489,44 +267,19 @@ public class UserDaoImpl implements UserDao {
 	 * 
 	 */
 	public boolean updateUserData(User user) {
-		Connection con = null;
-		PreparedStatement stmt = null;
+		Session session = factory.openSession();
+		Transaction transaction = null;
 		try {
-			con = ManagementConnection.getUsersConnection().getConnection();
-			stmt = con.prepareStatement(UPDATE_USER);
-			stmt.setString(1, user.getName());
-			stmt.setString(2, user.getPassword());
-			stmt.setString(3, user.getPhone());
-			stmt.setString(4, user.getGender());
-			StringBuilder language = new StringBuilder();
-			String[] lang = user.getLang();
-			for (int i = 0; i < lang.length; i++) {
-				language.append(lang[i] + " ");
-			}
-			stmt.setString(5, language.toString());
-			InputStream profilePic = new ByteArrayInputStream(
-					Base64.getDecoder().decode(user.getProfilePic().getBytes(StandardCharsets.UTF_8)));
-			stmt.setBlob(6, profilePic);
-			stmt.setString(7, user.getSecQues());
-			stmt.setString(8, user.getGame());
-			stmt.setInt(9, user.getId());
-			int i = stmt.executeUpdate();
-			return i == 1;
-		} catch (SQLException e) {
+			transaction = session.beginTransaction();
+			session.update(user);
+			transaction.commit();
+			return true;
+		} catch (HibernateException e) {
+			if (transaction != null)
+				transaction.rollback();
 			log.error(e);
 		} finally {
-			if (con != null)
-				try {
-					con.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
-			if (stmt != null)
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
+			session.close();
 		}
 		return false;
 	}
@@ -542,33 +295,20 @@ public class UserDaoImpl implements UserDao {
 	 * 
 	 */
 	@Override
-	public boolean addNewAddress(Address address, int id) {
-		Connection con = null;
-		PreparedStatement stmt = null;
+	public boolean addNewAddress(Address address) {
+		Session session = factory.openSession();
+		Transaction transaction = null;
 		try {
-			con = ManagementConnection.getUsersConnection().getConnection();
-			stmt = con.prepareStatement(ADD_ADDRESS);
-			stmt.setInt(1, id);
-			stmt.setString(2, address.getStreet());
-			stmt.setString(3, address.getCity());
-			stmt.setString(4, address.getState());
-			int i = stmt.executeUpdate();
-			return i == 1;
-		} catch (SQLException e) {
+			transaction = session.beginTransaction();
+			session.save(address);
+			transaction.commit();
+			return true;
+		} catch (HibernateException e) {
+			if (transaction != null)
+				transaction.rollback();
 			log.error(e);
 		} finally {
-			if (con != null)
-				try {
-					con.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
-			if (stmt != null)
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
+			session.close();
 		}
 		return false;
 	}
@@ -586,32 +326,19 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public boolean updateOldAddress(Address address) {
-		Connection con = null;
-		PreparedStatement stmt = null;
+		Session session = factory.openSession();
+		Transaction transaction = null;
 		try {
-			con = ManagementConnection.getUsersConnection().getConnection();
-			stmt = con.prepareStatement(UPDATE_ADDRESS);
-			stmt.setString(1, address.getStreet());
-			stmt.setString(2, address.getCity());
-			stmt.setString(3, address.getState());
-			stmt.setInt(4, address.getAddress_id());
-			int i = stmt.executeUpdate();
-			return i == 1;
-		} catch (SQLException e) {
+			transaction = session.beginTransaction();
+			session.update(address);
+			transaction.commit();
+			return true;
+		} catch (HibernateException e) {
+			if (transaction != null)
+				transaction.rollback();
 			log.error(e);
 		} finally {
-			if (con != null)
-				try {
-					con.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
-			if (stmt != null)
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
+			session.close();
 		}
 		return false;
 	}
@@ -628,31 +355,40 @@ public class UserDaoImpl implements UserDao {
 	 */
 
 	@Override
-	public boolean deleteOldAddress(int addressId) {
-		Connection con = null;
-		PreparedStatement stmt = null;
+	public boolean deleteOldAddress(Address oldAddress) {
+		Session session = factory.openSession();
+		Transaction transaction = null;
 		try {
-			con = ManagementConnection.getUsersConnection().getConnection();
-			stmt = con.prepareStatement(DElETE_ADDRESS);
-			stmt.setInt(1, addressId);
-			int i = stmt.executeUpdate();
-			return i == 1;
-		} catch (SQLException e) {
+			transaction = session.beginTransaction();
+			session.delete(oldAddress);
+			transaction.commit();
+			return true;
+		} catch (HibernateException e) {
+			if (transaction != null)
+				transaction.rollback();
 			log.error(e);
 		} finally {
-			if (con != null)
-				try {
-					con.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
-			if (stmt != null)
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					log.error(e);
-				}
+			session.close();
 		}
 		return false;
+	}
+
+	public UserDaoImpl() {
+
+	}
+
+	public UserDaoImpl(SessionFactory factory) {
+		super();
+		this.factory = factory;
+	}
+
+	@Override
+	public Object clone() {
+		try {
+			super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		return new UserDaoImpl(this.factory);
 	}
 }

@@ -24,7 +24,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import models.User;
 import services.UserService;
-import services.UserServiceImpl;
+import utility.BeanProvider;
 
 /**
  * Servlet implementation class UsersController
@@ -32,7 +32,7 @@ import services.UserServiceImpl;
 @MultipartConfig()
 public class UsersController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final Logger log = Logger.getLogger(UsersController.class.getClass());
+	private static final Logger log = Logger.getLogger(UsersController.class);
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
@@ -40,7 +40,6 @@ public class UsersController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		BasicConfigurator.configure();
 		Part excelFile = request.getPart("excelFile");
 		String fileType = excelFile.getContentType();
 		if (fileType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
@@ -52,7 +51,7 @@ public class UsersController extends HttpServlet {
 				while (itr.hasNext()) {
 					Row row = itr.next();
 					Iterator<Cell> cellIterator = row.cellIterator();
-					User user = new User();
+					User user = BeanProvider.getUserBean();
 					while (cellIterator.hasNext()) {
 						Cell cell = cellIterator.next();
 						int columnIndex = cell.getColumnIndex();
@@ -96,7 +95,7 @@ public class UsersController extends HttpServlet {
 					users.add(user);
 				}
 
-				UserService service = new UserServiceImpl();
+				UserService service = BeanProvider.getUserService();
 				String error = service.addAllUsers(users);
 				if (error.isEmpty()) {
 					log.info(users.size() + " users added");

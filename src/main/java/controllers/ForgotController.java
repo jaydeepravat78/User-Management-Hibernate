@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import models.User;
-import services.UserServiceImpl;
+import utility.BeanProvider;
 import utility.Validation;
 import services.UserService;
 
@@ -20,12 +20,12 @@ import services.UserService;
  */
 public class ForgotController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final Logger log = Logger.getLogger(ForgotController.class.getClass());
+	private static final Logger log = Logger.getLogger(ForgotController.class);
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		User user = new User();
+		User user = BeanProvider.getUserBean();
 		user.setEmail(request.getParameter("user_email"));
 		user.setSecQues(request.getParameter("secQues"));
 		user.setGame(request.getParameter("games"));
@@ -40,7 +40,7 @@ public class ForgotController extends HttpServlet {
 		error += Validation.checkPassword(user.getPassword());
 		error += Validation.confirmPassword(user.getPassword(), psw);
 		if(error.isEmpty()) {
-		UserService service = new UserServiceImpl();
+		UserService service = BeanProvider.getUserService();
 			if(service.forgotPsw(user)) {
 				log.info(user.getEmail() +  " Changed password");
 				response.sendRedirect("index.jsp");

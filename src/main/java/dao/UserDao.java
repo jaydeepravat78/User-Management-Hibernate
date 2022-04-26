@@ -21,10 +21,13 @@ public interface UserDao {
 	User getUserData(int id);
 
 	boolean updateUserData(User u);
-	
-	boolean addNewAddress(Address address, int id);
-	
+
+	boolean addNewAddress(Address address);
+
 	boolean updateOldAddress(Address address);
-	
-	boolean deleteOldAddress(int addressId); 
+
+	boolean deleteOldAddress(Address oldAddress);
+
+	Object clone() throws CloneNotSupportedException;
+
 }

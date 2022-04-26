@@ -2,6 +2,7 @@ package controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -14,7 +15,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import models.User;
-import services.UserServiceImpl;
+import utility.BeanProvider;
 import services.UserService;
 
 /**
@@ -30,13 +31,23 @@ public class DashboardController extends HttpServlet {
 	 * 
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		UserService service = new UserServiceImpl();
+		UserService service = BeanProvider.getUserService();
 		List<User> users = service.getUsers();
+		List<User> usersdata = new ArrayList<>();
+		for(User user: users) {
+			User userdata = new User();
+			userdata.setId(user.getId());
+			userdata.setName(user.getName());
+			userdata.setEmail(user.getEmail());
+			userdata.setPhone(user.getPhone());
+			userdata.setGame(user.getGame());
+			userdata.setGender(user.getGender());
+			usersdata.add(userdata);
+		}
 		JsonObject jobj = new JsonObject();
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		jobj.addProperty("status", "success");
-		jobj.add("data", gson.toJsonTree(users));
+		jobj.add("data", gson.toJsonTree(usersdata));
 		response.setContentType("application/json");
 		PrintWriter out = response.getWriter();
 		out.print(jobj);

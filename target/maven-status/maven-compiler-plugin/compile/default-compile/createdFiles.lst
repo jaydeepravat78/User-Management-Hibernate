@@ -14,7 +14,7 @@ controllers\UsersController.class
 utility\ReadBytes.class
 controllers\EmailCheckController.class
 models\Address.class
-utility\ManagementConnection.class
+utility\BeanProvider.class
 controllers\LoginController.class
 controllers\LogoutController.class
 controllers\UpdateController.class

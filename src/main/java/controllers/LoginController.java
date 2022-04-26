@@ -9,11 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 import models.User;
-import services.UserServiceImpl;
+import utility.BeanProvider;
 import services.UserService;
 
 /**
@@ -22,7 +21,7 @@ import services.UserService;
 public class LoginController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger log = Logger.getLogger(RegisterController.class.getClass());
+	private static final Logger log = Logger.getLogger(RegisterController.class);
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
@@ -30,8 +29,6 @@ public class LoginController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		BasicConfigurator.configure();
 		String email = request.getParameter("user_email");
 		String password = request.getParameter("user_password");
 		if (email.isEmpty()) {
@@ -43,7 +40,7 @@ public class LoginController extends HttpServlet {
 			RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
 			rd.forward(request, response);
 		} else {
-			UserService service = new UserServiceImpl();
+			UserService service = BeanProvider.getUserService();
 			User user = service.login(email, password);
 			if (user != null && user.getId() != 0) {
 				if (user.isAdmin()) {

@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import services.UserServiceImpl;
+import utility.BeanProvider;
 import services.UserService;
 
 /**
@@ -16,13 +16,13 @@ import services.UserService;
  */
 public class DeleteController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final Logger log = Logger.getLogger(DeleteController.class.getClass());   
+	private static final Logger log = Logger.getLogger(DeleteController.class);   
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
-		UserService service = new UserServiceImpl();
+		UserService service = BeanProvider.getUserService();
 		service.deleteUser(id);
 		log.info(id + " user deleted");
 	}

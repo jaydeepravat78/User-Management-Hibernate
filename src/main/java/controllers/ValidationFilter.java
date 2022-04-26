@@ -17,6 +17,7 @@ import models.Address;
 import models.User;
 import services.UserService;
 import services.UserServiceImpl;
+import utility.BeanProvider;
 import utility.Validation;
 
 /**
@@ -34,7 +35,8 @@ public class ValidationFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		String id = request.getParameter("id");
-		User userData = new User();
+		User userData = BeanProvider.getUserBean();
+		
 		userData.setName(request.getParameter("user_name"));
 		userData.setPhone(request.getParameter("user_phone"));
 		userData.setPassword(request.getParameter("user_password"));
