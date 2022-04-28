@@ -60,8 +60,8 @@
 	        delete from addresses where user_id = OLD.id;
         END
         ```
- - adding admin credentail (Password: admin@1234)
-	Sign up for a admin user
+ - adding admin 
+    - Sign up for a admin user
  	```
   	update users set isAdmin=1 where id = 1
   	``` 
