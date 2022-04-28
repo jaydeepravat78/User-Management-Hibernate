@@ -63,6 +63,6 @@
  - adding admin credentail (Password: admin@1234)
 	Sign up for a admin user
  	```
-  	update from users set isAdmin=1 where id = 1
+  	update users set isAdmin=1 where id = 1
   	``` 
     
